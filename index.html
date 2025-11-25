@@ -1,815 +1,152 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%233b82f6'/%3E%3Ctext x='50' y='70' font-size='60' text-anchor='middle' fill='white'%3E🤾%3C/text%3E%3C/svg%3E">
-  <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%233b82f6'/%3E%3Ctext x='50' y='70' font-size='60' text-anchor='middle' fill='white'%3E🤾%3C/text%3E%3C/svg%3E">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#3b82f6">
-  <title>🤾 Tournoi Handball</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: rgba(0,0,0,0);
-    }
-    
-    html, body {
-      height: 100%;
-      overflow: hidden;
-      position: fixed;
-      width: 100%;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
-      color: #1e293b;
-    }
-    
-    .page {
-      height: 100vh;
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch;
-      padding: 15px 15px 100px 15px;
-      display: none;
-    }
-    
-    .page.active {
-      display: block;
-    }
-    
-    .card {
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 15px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.8);
-    }
-    
-    h1 {
-      font-size: 1.8rem;
-      margin-bottom: 20px;
-      text-align: center;
-      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    
-    h2 {
-      font-size: 1.3rem;
-      margin-bottom: 15px;
-      color: #3b82f6;
-    }
-    
-    .btn {
-      padding: 14px 24px;
-      border: none;
-      border-radius: 12px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      touch-action: manipulation;
-      -webkit-appearance: none;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      min-height: 48px;
-    }
-    
-    .btn:active {
-      opacity: 0.7;
-      transform: scale(0.98);
-    }
-    
-    .btn-primary {
-      background: linear-gradient(135deg, #3b82f6, #2563eb);
-      color: white;
-    }
-    
-    .btn-success {
-      background: linear-gradient(135deg, #10b981, #059669);
-      color: white;
-    }
-    
-    .btn-danger {
-      background: linear-gradient(135deg, #ef4444, #dc2626);
-      color: white;
-    }
-    
-    .btn-warning {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-      color: white;
-    }
-    
-    .btn-secondary {
-      background: rgba(148, 163, 184, 0.4);
-      color: #1e293b;
-      border: 2px solid #94a3b8;
-    }
-    
-    .grid-2 {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-    
-    .grid-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-    }
-    
-    .grid-4 {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-    }
-    
-    .counter {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-      margin: 10px 0;
-    }
-    
-    .counter button {
-      width: 48px;
-      height: 48px;
-      font-size: 1.5rem;
-      background: rgba(59, 130, 246, 0.15);
-      border: 2px solid #3b82f6;
-      color: #3b82f6;
-      border-radius: 12px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    
-    .counter button:active {
-      background: rgba(59, 130, 246, 0.3);
-    }
-    
-    .counter span {
-      flex: 1;
-      text-align: center;
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #1e293b;
-    }
-    
-    .team-selector {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px;
-      background: rgba(148, 163, 184, 0.1);
-      border-radius: 12px;
-      margin-bottom: 10px;
-    }
-    
-    .color-badge {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border: 3px solid rgba(30, 41, 59, 0.2);
-      flex-shrink: 0;
-    }
-    
-    .team-number {
-      font-weight: bold;
-      font-size: 1.2rem;
-      width: 30px;
-      color: #1e293b;
-    }
-    
-    select {
-      flex: 1;
-      padding: 10px;
-      border-radius: 8px;
-      border: 2px solid #3b82f6;
-      background: rgba(255, 255, 255, 0.9);
-      color: #1e293b;
-      font-size: 1rem;
-      min-height: 44px;
-    }
-    
-    input[type="checkbox"] {
-      width: 24px;
-      height: 24px;
-      cursor: pointer;
-    }
-    
-    input[type="text"] {
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: 2px solid #3b82f6;
-      background: rgba(255, 255, 255, 0.9);
-      color: #1e293b;
-      font-size: 1rem;
-      margin: 8px 0;
-    }
-    
-    .ranking-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 15px 0;
-    }
-    
-    .ranking-table th {
-      background: rgba(59, 130, 246, 0.15);
-      padding: 10px 6px;
-      font-size: 0.85rem;
-      border-bottom: 2px solid #3b82f6;
-      color: #1e293b;
-    }
-    
-    .ranking-table td {
-      padding: 12px 6px;
-      text-align: center;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-      font-size: 0.9rem;
-      color: #1e293b;
-    }
-    
-    .ranking-table .team-cell {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .match-item {
-      background: rgba(148, 163, 184, 0.1);
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-    
-    .match-item.playing {
-      border: 3px solid #fbbf24;
-      animation: pulse 2s infinite;
-    }
-    
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
-    }
-    
-    .match-teams {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 1rem;
-      color: #1e293b;
-    }
-    
-    .match-number {
-      font-weight: bold;
-      color: #64748b;
-      min-width: 30px;
-    }
-    
-    .match-score {
-      font-weight: bold;
-      font-size: 1.1rem;
-      min-width: 60px;
-      text-align: center;
-      color: #1e293b;
-    }
-    
-    .winner {
-      color: #10b981;
-    }
-    
-    .timer {
-      font-size: 2.5rem;
-      font-weight: bold;
-      text-align: center;
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.7);
-      border-radius: 16px;
-      margin: 15px 0;
-      color: #1e293b;
-    }
-    
-    .timer.warning {
-      color: #ef4444;
-      animation: blink 1s infinite;
-    }
-    
-    @keyframes blink {
-      0%, 50% { opacity: 1; }
-      51%, 100% { opacity: 0.4; }
-    }
-    
-    .possession-zone {
-      padding: 30px 20px;
-      border-radius: 16px;
-      text-align: center;
-      margin: 20px 0;
-      transition: background 0.3s;
-      color: #1e293b;
-    }
-    
-    .score-display {
-      display: flex;
-      justify-content: space-around;
-      margin: 20px 0;
-      padding: 15px;
-      background: rgba(255, 255, 255, 0.7);
-      border-radius: 16px;
-    }
-    
-    .score-item {
-      text-align: center;
-    }
-    
-    .score-item .score {
-      font-size: 2.2rem;
-      font-weight: bold;
-      margin-top: 8px;
-      color: #1e293b;
-    }
-    
-    .action-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin: 20px 0;
-    }
-    
-    .action-btn {
-      padding: 20px;
-      font-size: 1.1rem;
-      border-radius: 16px;
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-      transition: all 0.2s;
-      min-height: 64px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-    }
-    
-    .action-btn:active {
-      transform: scale(0.95);
-    }
-    
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.7);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    
-    .modal.active {
-      display: flex;
-    }
-    
-    .modal-content {
-      background: white;
-      border-radius: 20px;
-      padding: 30px;
-      max-width: 500px;
-      width: 100%;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-      color: #1e293b;
-    }
-    
-    .stats-table {
-      width: 100%;
-      margin: 20px 0;
-      border-collapse: collapse;
-    }
-    
-    .stats-table th,
-    .stats-table td {
-      padding: 12px;
-      text-align: center;
-      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
-    }
-    
-    .stats-table th {
-      background: rgba(59, 130, 246, 0.15);
-      font-weight: bold;
-    }
-    
-    .header-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 15px;
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 16px;
-      margin-bottom: 15px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    
-    .back-btn {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: rgba(59, 130, 246, 0.15);
-      border: 2px solid #3b82f6;
-      color: #3b82f6;
-      font-size: 1.5rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .back-btn:active {
-      background: rgba(59, 130, 246, 0.3);
-    }
-    
-    .play-pause-btn {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #10b981, #059669);
-      border: none;
-      color: white;
-      font-size: 1.8rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
-    }
-    
-    .play-pause-btn:active {
-      transform: scale(0.95);
-    }
-    
-    .illustration {
-      text-align: center;
-      font-size: 8rem;
-      margin: 30px 0;
-      opacity: 0.3;
-    }
-    
-    .counter-badge {
-      display: inline-block;
-      padding: 6px 12px;
-      background: rgba(59, 130, 246, 0.15);
-      border: 2px solid #3b82f6;
-      border-radius: 20px;
-      font-size: 0.9rem;
-      font-weight: bold;
-      color: #3b82f6;
-    }
-
-    .bonus-section {
-      margin: 20px 0;
-      padding: 15px;
-      background: rgba(251, 191, 36, 0.1);
-      border-radius: 12px;
-      border: 2px solid #f59e0b;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <title>Tournoi d'Ultimate</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f0f0f0;
+        }
+        .container {
+            padding: 20px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            margin: 8px 0;
+            background: #2196F3;
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        .hidden {
+            display: none;
+        }
+        .card {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+    </style>
 </head>
 <body>
-
-<!-- PAGE 1: Configuration -->
-<div id="page1" class="page active">
-  <h1>🤾 Tournoi Handball</h1>
-  
-  <div class="card">
-    <h2>⚙️ Configuration</h2>
-    
-    <div style="margin: 20px 0;">
-      <strong style="display: block; margin-bottom: 10px;">Nombre d'équipes :</strong>
-      <div class="grid-4">
-        <button class="btn btn-secondary" onclick="setTeams(3)">3</button>
-        <button class="btn btn-primary" onclick="setTeams(4)">4</button>
-        <button class="btn btn-secondary" onclick="setTeams(5)">5</button>
-        <button class="btn btn-secondary" onclick="setTeams(6)">6</button>
-      </div>
-    </div>
-    
-    <div>
-      <strong>Durée des matchs (minutes) :</strong>
-      <div class="counter">
-        <button onclick="adjustDuration(-1)">−</button>
-        <span id="durationDisplay">5</span>
-        <button onclick="adjustDuration(1)">+</button>
-      </div>
-    </div>
-    
-    <div>
-      <strong>Points par but :</strong>
-      <div class="counter">
-        <button onclick="adjustPoints(-1)">−</button>
-        <span id="pointsDisplay">1</span>
-        <button onclick="adjustPoints(1)">+</button>
-      </div>
-    </div>
-    
-    <div class="bonus-section">
-      <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 15px;">
-        <input type="checkbox" id="bonusCheck" onchange="toggleBonus()">
-        <strong>⭐ Activer Bonus</strong>
-      </label>
-      
-      <div id="bonusOptions" style="display: none;">
-        <label style="display: block; margin-bottom: 8px;"><strong>Nom du bonus :</strong></label>
-        <input type="text" id="bonusName" value="7m penalty" placeholder="Ex: 7m penalty, action spéciale...">
-        
-        <strong style="display: block; margin-top: 15px;">Points par bonus :</strong>
-        <div class="counter">
-          <button onclick="adjustBonusPoints(-1)">−</button>
-          <span id="bonusPointsDisplay">1</span>
-          <button onclick="adjustBonusPoints(1)">+</button>
+    <div class="container" id="pageAccueil">
+        <h2>Tournoi d'Ultimate</h2>
+        <div class="card">
+            <label>Nombre d'équipes :</label>
+            <select id="nbEquipes">
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+            </select>
+            <div class="btn" onclick="genererEquipes()">Commencer →</div>
         </div>
-      </div>
     </div>
-  </div>
-  
-  <button class="btn btn-success" style="width: 100%; margin-top: 20px;" onclick="goToPage2()">
-    Suivant →
-  </button>
-  
-  <div class="illustration">🤾</div>
-</div>
 
-<!-- PAGE 2: Personnalisation -->
-<div id="page2" class="page">
-  <h1>🎨 Personnalisation</h1>
-  
-  <div class="card">
-    <h2>Couleurs des équipes</h2>
-    <div id="teamsList"></div>
-  </div>
-  
-  <button class="btn btn-success" style="width: 100%; margin-top: 20px;" onclick="startTournament()">
-    Démarrer le tournoi 🚀
-  </button>
-</div>
-
-<!-- PAGE 3: Tournoi -->
-<div id="page3" class="page">
-  <h1>🏆 Tournoi Handball</h1>
-  
-  <div class="card">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-      <h2 style="margin: 0;">📊 Classement</h2>
-      <button class="btn btn-primary" style="padding: 8px 16px;" onclick="exportPDF()">📄 PDF</button>
+    <div class="container hidden" id="pageEquipes">
+        <h2>Nom des équipes</h2>
+        <div id="listeEquipes"></div>
+        <div class="btn" onclick="genererTournoi()">Générer le tournoi</div>
     </div>
-    <table class="ranking-table" id="rankingTable"></table>
-  </div>
-  
-  <div class="card">
-    <h2>⚽ Matchs <span class="counter-badge" id="matchCounter">0 / 0</span></h2>
-    <div id="matchesList"></div>
-  </div>
-  
-  <button class="btn btn-danger" style="width: 100%; margin-top: 20px;" onclick="confirmReset()">
-    🔄 Nouveau tournoi
-  </button>
-</div>
 
-<!-- PAGE 4: Match -->
-<div id="page4" class="page">
-  <div class="header-bar">
-    <button class="back-btn" onclick="backToTournament()">←</button>
-    <div class="timer" id="timer">5:00</div>
-    <button class="play-pause-btn" id="playPauseBtn" onclick="toggleTimer()">▶</button>
-  </div>
-  
-  <div id="startPhase" class="card">
-    <h2 style="text-align: center;">Qui engage ?</h2>
-    <div class="grid-2" style="margin-top: 20px;" id="startButtons"></div>
-    <button class="btn btn-success" style="width: 100%; margin-top: 20px; display: none;" id="launchBtn" onclick="launchMatch()">
-      ▶️ LANCER LE MATCH
-    </button>
-  </div>
-  
-  <div id="gamePhase" style="display: none;">
-    <div class="possession-zone" id="possessionZone">
-      <h2 id="possessionTeam" style="margin-bottom: 10px;"></h2>
-      <div style="font-size: 1.1rem; opacity: 0.9;">🤾 Possession</div>
+    <div class="container hidden" id="pageTournoi">
+        <h2>Matchs</h2>
+        <div id="listeMatchs"></div>
+        <div class="btn" onclick="afficherStats()">Voir statistiques</div>
     </div>
-    
-    <div class="score-display">
-      <div class="score-item">
-        <div style="display: flex; align-items: center; gap: 8px; justify-content: center;">
-          <div class="color-badge" id="badge1"></div>
-          <span id="teamName1"></span>
-        </div>
-        <div class="score" id="score1">0</div>
-      </div>
-      <div class="score-item">
-        <div style="display: flex; align-items: center; gap: 8px; justify-content: center;">
-          <div class="color-badge" id="badge2"></div>
-          <span id="teamName2"></span>
-        </div>
-        <div class="score" id="score2">0</div>
-      </div>
+
+    <div class="container hidden" id="pageStats">
+        <h2>Statistiques</h2>
+        <div id="stats"></div>
+        <div class="btn" onclick="retourAccueil()">Retour accueil</div>
     </div>
-    
-    <div class="action-buttons">
-      <button class="action-btn" style="background: linear-gradient(135deg, #10b981, #059669); color: white;" onclick="scoreGoal()">
-        🥅 BUT
-      </button>
-      <button class="action-btn" id="bonusBtn" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; display: none;" onclick="scoreBonus()">
-        ⭐ BONUS
-      </button>
-      <button class="action-btn" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white;" onclick="missedShot()">
-        ❌ TIR RATÉ
-      </button>
-      <button class="action-btn" style="background: linear-gradient(135deg, #6366f1, #4f46e5); color: white;" onclick="turnover()">
-        🔄 PERTE DE BALLE
-      </button>
-    </div>
-    
-    <button class="btn btn-warning" style="width: 100%; margin-top: 20px;" onclick="confirmEndMatch()">
-      🏁 Terminer le match
-    </button>
-  </div>
-</div>
 
-<!-- Modal Stats -->
-<div id="statsModal" class="modal">
-  <div class="modal-content">
-    <h2 style="text-align: center; color: #10b981; margin-bottom: 20px;">📊 Statistiques du match</h2>
-    <div id="statsContent"></div>
-    <button class="btn btn-success" style="width: 100%; margin-top: 20px;" onclick="closeStats()">
-      ✅ OK
-    </button>
-  </div>
-</div>
+    <script>
+        let equipes = [];
+        let matchs = [];
 
-<!-- Modal Confirmation -->
-<div id="confirmModal" class="modal">
-  <div class="modal-content">
-    <h2 style="text-align: center; margin-bottom: 20px;">⚠️ Confirmation</h2>
-    <p id="confirmText" style="text-align: center; font-size: 1.1rem; margin-bottom: 30px;"></p>
-    <div class="grid-2">
-      <button class="btn btn-secondary" onclick="closeConfirm()">Annuler</button>
-      <button class="btn btn-danger" id="confirmBtn">Confirmer</button>
-    </div>
-  </div>
-</div>
+        function changerPage(id) {
+            document.querySelectorAll('.container').forEach(p => p.classList.add('hidden'));
+            document.getElementById(id).classList.remove('hidden');
+        }
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script>
-// État global
-var s = {
-  n: 4,
-  d: 5,
-  p: 1,
-  be: false,
-  bn: '7m penalty',
-  bp: 1,
-  t: [],
-  m: [],
-  ci: null,
-  s1: 0,
-  s2: 0,
-  po: 1,
-  et: null,
-  ms: false,
-  tl: 300,
-  ti: null,
-  ir: false,
-  catches1: 0,
-  catches2: 0,
-  bonus1: 0,
-  bonus2: 0,
-  poss1: 0,
-  poss2: 0
-};
+        function genererEquipes() {
+            let nb = parseInt(document.getElementById('nbEquipes').value);
+            equipes = [];
+            let html = '';
+            for (let i=1; i<=nb; i++) {
+                html += `<div class='card'><label>Équipe ${i} :</label><input id='equipe${i}'></div>`;
+            }
+            document.getElementById('listeEquipes').innerHTML = html;
+            changerPage('pageEquipes');
+        }
 
-const colors = [
-  {n: 'Blanc', c: '#FFFFFF'},
-  {n: 'Noir', c: '#1a1a1a'},
-  {n: 'Bleu', c: '#3b82f6'},
-  {n: 'Rouge', c: '#ef4444'},
-  {n: 'Vert', c: '#10b981'},
-  {n: 'Jaune', c: '#fbbf24'},
-  {n: 'Orange', c: '#f97316'},
-  {n: 'Violet', c: '#8b5cf6'},
-  {n: 'Rose', c: '#ec4899'},
-  {n: 'Cyan', c: '#06b6d4'}
-];
+        function genererTournoi() {
+            const nb = document.getElementById('nbEquipes').value;
+            equipes = [];
+            for (let i=1; i<=nb; i++) {
+                equipes.push(document.getElementById(`equipe${i}`).value || `Équipe ${i}`);
+            }
+            matchs = [];
+            for (let i=0; i<equipes.length; i++) {
+                for (let j=i+1; j<equipes.length; j++) {
+                    matchs.push({ a: equipes[i], b: equipes[j], scoreA:null, scoreB:null });
+                }
+            }
+            let html = '';
+            matchs.forEach((m, i) => {
+                html += `<div class='card'>${m.a} vs ${m.b}<br>
+                    <input type='number' placeholder='Score ${m.a}' onchange='updateScore(${i},"A",this.value)'>
+                    <input type='number' placeholder='Score ${m.b}' onchange='updateScore(${i},"B",this.value)'></div>`;
+            });
+            document.getElementById('listeMatchs').innerHTML = html;
+            changerPage('pageTournoi');
+        }
 
-// PAGE 1
-function setTeams(n) {
-  s.n = n;
-  document.querySelectorAll('#page1 .grid-4 .btn').forEach((b, i) => {
-    b.className = i === [3,4,5,6].indexOf(n) ? 'btn btn-primary' : 'btn btn-secondary';
-  });
-}
+        function updateScore(i, team, val) {
+            if (team == "A") matchs[i].scoreA = parseInt(val);
+            else matchs[i].scoreB = parseInt(val);
+        }
 
-function adjustDuration(delta) {
-  s.d = Math.max(1, Math.min(60, s.d + delta));
-  document.getElementById('durationDisplay').textContent = s.d;
-}
+        function afficherStats() {
+            let scores = {};
+            equipes.forEach(e => scores[e] = 0);
+            matchs.forEach(m => {
+                if (m.scoreA != null && m.scoreB != null) {
+                    if (m.scoreA > m.scoreB) scores[m.a]++;
+                    else if (m.scoreB > m.scoreA) scores[m.b]++;
+                }
+            });
+            let html = '';
+            Object.keys(scores).forEach(e => {
+                html += `<div class='card'>${e} : ${scores[e]} victoires</div>`;
+            });
+            document.getElementById('stats').innerHTML = html;
+            changerPage('pageStats');
+        }
 
-function adjustPoints(delta) {
-  s.p = Math.max(1, Math.min(10, s.p + delta));
-  document.getElementById('pointsDisplay').textContent = s.p;
-}
+        function retourAccueil() {
+            changerPage('pageAccueil');
+        }
 
-function toggleBonus() {
-  s.be = document.getElementById('bonusCheck').checked;
-  document.getElementById('bonusOptions').style.display = s.be ? 'block' : 'none';
-}
-
-function adjustBonusPoints(delta) {
-  s.bp = Math.max(1, Math.min(10, s.bp + delta));
-  document.getElementById('bonusPointsDisplay').textContent = s.bp;
-}
-
-function goToPage2() {
-  s.bn = document.getElementById('bonusName').value || '7m penalty';
-  s.t = [];
-  for (let i = 0; i < s.n; i++) {
-    s.t.push({id: i + 1, c: colors[i].c, n: colors[i].n});
-  }
-  renderTeamsList();
-  showPage('page2');
-}
-
-function renderTeamsList() {
-  const html = s.t.map((t, i) => `
-    <div class="team-selector">
-      <span class="team-number">${t.id}</span>
-      <div class="color-badge" style="background: ${t.c};"></div>
-      <select onchange="changeTeamColor(${i}, this.value)">
-        ${colors.map(c => `<option value="${c.c}" ${c.c === t.c ? 'selected' : ''}>${c.n}</option>`).join('')}
-      </select>
-    </div>
-  `).join('');
-  document.getElementById('teamsList').innerHTML = html;
-}
-
-function changeTeamColor(idx, color) {
-  const c = colors.find(x => x.c === color);
-  s.t[idx].c = c.c;
-  s.t[idx].n = c.n;
-  renderTeamsList();
-}
-
-// PAGE 3
-function startTournament() {
-  generateMatches();
-  showPage('page3');
-  updateRanking();
-  updateMatches();
-}
-
-function generateMatches() {
-  s.m = [];
-  
-  if (s.n === 5) {
-    const order = [[0,1],[2,3],[0,4],[1,2],[3,4],[0,2],[1,3],[2,4],[0,3],[1,4]];
-    order.forEach(pair => {
-      s.m.push({
-        t1: s.t[pair[0]],
-        t2: s.t[pair[1]],
-        s1: null,
-        s2: null,
-        w: null,
-        pl: false,
-        stats: {catches1: 0, catches2: 0, bonus1: 0, bonus2: 0, poss1: 0, poss2: 0}
-      });
-    });
-  } else {
-    for (let i = 0; i < s.n; i++) {
-      for (let j = i + 1; j < s.n; j++) {
-        s.m.push({
-          t1: s.t[i],
-          t2: s.t[j],
-          s1: null,
-          s2: null,
-          w: null,
-          pl: false,
-          stats: {catches1: 0, catches2: 0, bonus1: 0, bonus2: 0, poss1: 0, poss2: 0}
-        });
-      }
-    }
-  }
-}
-
-function updateRanking() {
-  const ranks = s.t.map(t => ({
-    t: t,
-    pts: 0,
-    w: 0,
-    d: 0,
-    l: 0,
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js');
+        }
+    </script>
+</body>
+</html>

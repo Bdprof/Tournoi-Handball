@@ -20,13 +20,3 @@
     }
   ]
 }
-```
-
----
-
-## 📂 **Structure finale de vos fichiers :**
-```
-Tournoi-Handball/
-├── index.html          (le code de l'artifact)
-├── service-worker.js   (ci-dessus)
-└── manifest.json       (ci-dessus)

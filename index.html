@@ -205,7 +205,275 @@ if(ranks[j].t.id===m.t2.id)r2=ranks[j];
 }
 r1.gf+=m.s1;r1.ga+=m.s2;r2.gf+=m.s2;r2.ga+=m.s1;
 if(m.w===1){r1.pts+=3;r1.w++;r2.l++}
-else if(m.w===2){r2.pts+=3;r2.w++;r1.l++}<!DOCTYPE html>
+else if(m.w===2){r2.pts+=3;r2.w++;r1.l++}
+else{r1.pts++;r2.pts++;r1.d++;r2.d++}
+}
+for(var i=0;i<ranks.length;i++){
+ranks[i].gd=ranks[i].gf-ranks[i].ga;
+}
+ranks.sort(function(a,b){
+if(b.pts!==a.pts)return b.pts-a.pts;
+return b.gd-a.gd;
+});
+var html='<tr><th style="width:10%">Pos</th><th style="width:30%">Équipe</th><th style="width:15%">Pts</th><th style="width:20%">V-N-D</th><th style="width:15%">BP:BC</th><th style="width:10%">Diff</th></tr>';
+for(var i=0;i<ranks.length;i++){
+var r=ranks[i];
+var diffColor=r.gd>0?'#38ef7d':(r.gd<0?'#ff6a00':'#fff');
+html+='<tr><td><strong>'+(i+1)+'</strong></td><td><div style="display:flex;align-items:center;gap:4px"><div class="color-badge" style="background:'+r.t.c+';width:16px;height:16px;border-width:2px"></div><span style="font-size:.8rem">'+r.t.n+'</span></div></td><td><strong>'+r.pts+'</strong></td><td style="font-size:.7rem">'+r.w+'-'+r.d+'-'+r.l+'</td><td style="font-size:.7rem">'+r.gf+':'+r.ga+'</td><td style="color:'+diffColor+';font-size:.85rem"><strong>'+(r.gd>0?'+':'')+r.gd+'</strong></td></tr>';
+}
+document.getElementById('rankingTable').innerHTML=html;
+}
+
+function updateMatches(){
+var played=0;
+for(var i=0;i<s.m.length;i++){
+if(s.m[i].pl)played++;
+}
+document.getElementById('matchCounter').textContent=played+'/'+s.m.length;
+var html='';
+for(var i=0;i<s.m.length;i++){
+var m=s.m[i];
+var isCurrent=i===s.ci&&!m.pl;
+html+='<div class="match-item '+(isCurrent?'playing':'')+'"><span style="font-weight:bold;color:rgba(255,255,255,.6);min-width:20px;font-size:.85rem">'+(i+1)+'</span><div style="flex:1;display:flex;align-items:center;gap:4px;font-size:.75rem;font-weight:600"><div class="color-badge" style="background:'+m.t1.c+';width:16px;height:16px;border-width:2px"></div><span>'+m.t1.n+'</span><span style="margin:0 2px">—</span><span>'+m.t2.n+'</span><div class="color-badge" style="background:'+m.t2.c+';width:16px;height:16px;border-width:2px"></div></div>';
+if(m.pl){
+html+='<div style="font-weight:bold;font-size:.9rem;min-width:40px;text-align:center;white-space:nowrap"><span style="color:'+(m.w===1?'#38ef7d':'#fff')+'">'+m.s1+'</span>-<span style="color:'+(m.w===2?'#38ef7d':'#fff')+'">'+m.s2+'</span></div>';
+}else if(isCurrent){
+html+='<button class="btn btn-warning" style="padding:6px 10px;min-height:36px;font-size:.75rem" onclick="resumeMatch('+i+')">REPREN</button>';
+}else{
+html+='<button class="btn btn-primary" style="padding:6px 10px;min-height:36px;font-size:.75rem" onclick="playMatch('+i+')">JOUER</button>';
+}
+html+='</div>';
+}
+document.getElementById('matchesList').innerHTML=html;
+}
+
+function playMatch(idx){
+s.ci=idx;
+var m=s.m[idx];
+s.s1=0;s.s2=0;s.po=1;s.et=null;s.ms=false;s.tl=s.d*60;s.ir=false;s.c1=0;s.c2=0;s.b1=0;s.b2=0;s.p1=0;s.p2=0;
+if(s.ti){clearInterval(s.ti);s.ti=null}
+document.getElementById('teamName1').textContent=m.t1.n;
+document.getElementById('teamName2').textContent=m.t2.n;
+document.getElementById('badge1').style.background=m.t1.c;
+document.getElementById('badge2').style.background=m.t2.c;
+var txtColor1=m.t1.c==='#FFFFFF'||m.t1.c==='#fbbf24'?'#000':'#fff';
+var txtColor2=m.t2.c==='#FFFFFF'||m.t2.c==='#fbbf24'?'#000':'#fff';
+document.getElementById('startButtons').innerHTML='<button class="btn" style="background:'+m.t1.c+';color:'+txtColor1+';width:100%;padding:30px;font-size:1.3rem;font-weight:800" onclick="selectStarter(1)">'+m.t1.n+'</button><button class="btn" style="background:'+m.t2.c+';color:'+txtColor2+';width:100%;padding:30px;font-size:1.3rem;font-weight:800" onclick="selectStarter(2)">'+m.t2.n+'</button>';
+document.getElementById('bonusBtn').style.display=s.be?'block':'none';
+if(s.be){document.getElementById('bonusBtn').innerHTML='⭐ '+s.bn.toUpperCase()}
+document.getElementById('startPhase').style.display='block';
+document.getElementById('gamePhase').style.display='none';
+document.getElementById('launchBtn').style.display='none';
+updateTimer();
+updateScores();
+showPage('p4');
+}
+
+function resumeMatch(idx){
+s.ci=idx;
+var m=s.m[idx];
+s.s1=m.s1!==null?m.s1:0;
+s.s2=m.s2!==null?m.s2:0;
+s.c1=m.stats.c1||0;
+s.c2=m.stats.c2||0;
+s.b1=m.stats.b1||0;
+s.b2=m.stats.b2||0;
+s.p1=m.stats.p1||0;
+s.p2=m.stats.p2||0;
+s.po=s.p1>s.p2?1:2;
+s.ms=true;
+document.getElementById('teamName1').textContent=m.t1.n;
+document.getElementById('teamName2').textContent=m.t2.n;
+document.getElementById('badge1').style.background=m.t1.c;
+document.getElementById('badge2').style.background=m.t2.c;
+document.getElementById('bonusBtn').style.display=s.be?'block':'none';
+if(s.be){document.getElementById('bonusBtn').innerHTML='⭐ '+s.bn.toUpperCase()}
+document.getElementById('startPhase').style.display='none';
+document.getElementById('gamePhase').style.display='block';
+updateScores();
+updatePossession();
+updateTimer();
+showPage('p4');
+}
+
+function selectStarter(team){
+s.et=team;
+s.po=team;
+var btns=document.querySelectorAll('#startButtons .btn');
+for(var i=0;i<btns.length;i++){
+btns[i].style.opacity=i+1===team?'1':'.5';
+}
+document.getElementById('launchBtn').style.display='block';
+}
+
+function launchMatch(){
+s.ms=true;
+s.p1=s.po===1?1:0;
+s.p2=s.po===2?1:0;
+document.getElementById('startPhase').style.display='none';
+document.getElementById('gamePhase').style.display='block';
+updateScores();
+updatePossession();
+startTimer();
+}
+
+function updateScores(){
+document.getElementById('score1').textContent=s.s1;
+document.getElementById('score2').textContent=s.s2;
+}
+
+function updatePossession(){
+var m=s.m[s.ci];
+var zone=document.getElementById('possessionZone');
+var teamName=document.getElementById('possessionTeam');
+if(s.po===1){
+var isLight=m.t1.c==='#FFFFFF'||m.t1.c==='#fbbf24';
+zone.style.background=isLight?m.t1.c:m.t1.c+'dd';
+zone.style.border='4px solid '+(isLight?'rgba(0,0,0,.3)':'rgba(255,255,255,.8)');
+zone.style.boxShadow='0 0 30px '+m.t1.c+'80';
+teamName.textContent=m.t1.n;
+teamName.style.color=isLight?'#000':'#fff';
+}else{
+var isLight=m.t2.c==='#FFFFFF'||m.t2.c==='#fbbf24';
+zone.style.background=isLight?m.t2.c:m.t2.c+'dd';
+zone.style.border='4px solid '+(isLight?'rgba(0,0,0,.3)':'rgba(255,255,255,.8)');
+zone.style.boxShadow='0 0 30px '+m.t2.c+'80';
+teamName.textContent=m.t2.n;
+teamName.style.color=isLight?'#000':'#fff';
+}
+}
+
+function scoreGoal(){
+if(!s.ms)return;
+if(s.po===1){s.s1+=s.p;s.c1++}else{s.s2+=s.p;s.c2++}
+s.po=s.po===1?2:1;
+if(s.po===1)s.p1++;else s.p2++;
+updateScores();
+updatePossession();
+}
+
+function scoreBonus(){
+if(!s.ms)return;
+if(s.po===1){s.s1+=s.bp;s.b1++}else{s.s2+=s.bp;s.b2++}
+updateScores();
+}
+
+function missedShot(){
+if(!s.ms)return;
+showConfirm('Qui récupère le ballon ?',function(){},true);
+}
+
+function turnover(){
+if(!s.ms)return;
+s.po=s.po===1?2:1;
+if(s.po===1)s.p1++;else s.p2++;
+updatePossession();
+}
+
+function updateTimer(){
+var mins=Math.floor(s.tl/60);
+var secs=s.tl%60;
+var timer=document.getElementById('timer');
+timer.textContent=mins+':'+(secs<10?'0':'')+secs;
+if(s.tl<60){timer.classList.add('warning')}else{timer.classList.remove('warning')}
+}
+
+function startTimer(){
+if(s.ir)return;
+s.ir=true;
+document.getElementById('playPauseBtn').textContent='⏸';
+s.ti=setInterval(function(){
+s.tl--;
+updateTimer();
+if(s.tl<=0){
+stopTimer();
+endMatch();
+}
+},1000);
+}
+
+function stopTimer(){
+if(!s.ir)return;
+s.ir=false;
+clearInterval(s.ti);
+document.getElementById('playPauseBtn').textContent='▶';
+}
+
+function toggleTimer(){
+if(!s.ms)return;
+if(s.ir){stopTimer()}else{startTimer()}
+}
+
+function confirmEndMatch(){
+showConfirm('Êtes-vous sûr de vouloir terminer ce match ?',endMatch);
+}
+
+function endMatch(){
+stopTimer();
+var m=s.m[s.ci];
+m.s1=s.s1;
+m.s2=s.s2;
+m.w=s.s1>s.s2?1:(s.s2>s.s1?2:0);
+m.pl=true;
+m.stats={c1:s.c1,c2:s.c2,b1:s.b1,b2:s.b2,p1:s.p1,p2:s.p2};
+s.m[s.ci]=m;
+showStats(m);
+}
+
+function showStats(m){
+var ratio1=s.p1>0?(s.s1/s.p1).toFixed(2):'0.00';
+var ratio2=s.p2>0?(s.s2/s.p2).toFixed(2):'0.00';
+var winner=m.w===1?m.t1.n:(m.w===2?m.t2.n:'Match nul');
+var html='<div style="text-align:center;margin-bottom:25px;font-size:1.6rem;color:#38ef7d;font-weight:800">🏆 '+winner+'</div><table class="stats-table"><tr><th style="text-align:left">Statistique</th><th>'+m.t1.n+'</th><th>'+m.t2.n+'</th></tr>';
+html+='<tr><td style="text-align:left;font-weight:700">Score final</td><td><strong style="font-size:1.5rem;color:'+(m.w===1?'#38ef7d':'#fff')+'">'+m.s1+'</strong></td><td><strong style="font-size:1.5rem;color:'+(m.w===2?'#38ef7d':'#fff')+'">'+m.s2+'</strong></td></tr>';
+html+='<tr><td style="text-align:left">🥅 Buts marqués</td><td>'+s.c1+'</td><td>'+s.c2+'</td></tr>';
+if(s.be){
+html+='<tr><td style="text-align:left">⭐ '+s.bn+'</td><td>'+s.b1+'</td><td>'+s.b2+'</td></tr>';
+}
+html+='<tr><td style="text-align:left">🔄 Possessions</td><td>'+s.p1+'</td><td>'+s.p2+'</td></tr>';
+html+='<tr><td style="text-align:left;font-weight:700">📈 Pts/Possession</td><td><strong>'+ratio1+'</strong></td><td><strong>'+ratio2+'</strong></td></tr>';
+html+='</table>';
+document.getElementById('statsContent').innerHTML=html;
+document.getElementById('statsModal').classList.add('active');
+}
+
+function closeStats(){
+document.getElementById('statsModal').classList.remove('active');
+s.ci=null;
+backToTournament();
+}
+
+function backToTournament(){
+stopTimer();
+showPage('p3');
+updateRanking();
+updateMatches();
+}
+
+function showConfirm(text,callback,isRecovery){
+document.getElementById('confirmText').textContent=text;
+if(isRecovery){
+document.getElementById('confirmButtons').style.display='none';
+document.getElementById('recoveryButtons').style.display='block';
+}else{
+document.getElementById('confirmButtons').style.display='grid';
+document.getElementById('recoveryButtons').style.display='none';
+document.getElementById('confirmBtn').onclick=function(){
+closeConfirm();
+callback();
+};
+}
+document.getElementById('confirmModal').classList.add('active');
+}
+
+function handleRecovery(isRecovered){
+if(isRecovered){
+if(s.po===1)s.p1++;else s.p2++;
+}else{
+s.po=s.po===1?2:1;
+if(s.po===1)s.p1++;else s.p2++;
+}
+updatePossession<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">

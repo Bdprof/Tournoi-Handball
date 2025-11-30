@@ -1,4 +1,21 @@
-<!DOCTYPE html>
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button{
+  opacity:1;
+}@media (max-width: 768px) {
+  h1{font-size:1.5rem;margin-bottom:10px}
+  h2{font-size:1.1rem;margin-bottom:10px}
+  .card{padding:15px;margin-bottom:12px}
+  .btn{padding:10px 16px;font-size:.85rem;min-height:44px}
+  .counter button{width:44px;height:44px;font-size:1.5rem}
+  .counter span{font-size:1.5rem}
+  .action-btn{padding:14px 10px;font-size:.9rem;min-height:55px}
+  .ranking-table th{padding:6px 2px;font-size:.65rem}
+  .ranking-table td{padding:6px 2px;font-size:.7rem}
+  .match-item{padding:8px;gap:6px;font-size:.8rem}
+  .timer{font-size:2rem;padding:12px}
+  .score-item .score{font-size:2rem}
+  .possession-zone{padding:20px 15px}
+}<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -201,6 +218,49 @@ input[type="text"]::placeholder{color:rgba(255,255,255,.6)}
 </div>
 </div>
 
+<div id="manualScoreModal" class="modal">
+<div class="modal-content">
+<h2 style="text-align:center;margin-bottom:20px;font-size:1.6rem">📝 SAISIE MANUELLE</h2>
+<div style="margin-bottom:20px">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px">
+<strong style="font-size:1.1rem" id="manualTeam1Name">Équipe 1</strong>
+<strong style="font-size:1.1rem" id="manualTeam2Name">Équipe 2</strong>
+</div>
+<table style="width:100%;border-collapse:collapse">
+<tr style="border-bottom:2px solid rgba(255,255,255,.3)">
+<th style="padding:10px;text-align:left;font-size:1rem">Statistique</th>
+<th style="padding:10px;text-align:center;width:25%"><span id="badge1Manual" class="color-badge" style="width:24px;height:24px;display:inline-block"></span></th>
+<th style="padding:10px;text-align:center;width:25%"><span id="badge2Manual" class="color-badge" style="width:24px;height:24px;display:inline-block"></span></th>
+</tr>
+<tr style="border-bottom:1px solid rgba(255,255,255,.2)">
+<td style="padding:10px;font-weight:600">🥅 Score final</td>
+<td style="padding:10px;text-align:center"><input type="number" id="manualScore1" min="0" value="0" style="width:60px;padding:8px;border-radius:8px;border:2px solid rgba(255,255,255,.3);background:rgba(255,255,255,.15);color:#fff;text-align:center;font-size:1.1rem;font-weight:bold"></td>
+<td style="padding:10px;text-align:center"><input type="number" id="manualScore2" min="0" value="0" style="width:60px;padding:8px;border-radius:8px;border:2px solid rgba(255,255,255,.3);background:rgba(255,255,255,.15);color:#fff;text-align:center;font-size:1.1rem;font-weight:bold"></td>
+</tr>
+<tr style="border-bottom:1px solid rgba(255,255,255,.2)">
+<td style="padding:10px">🎯 Buts marqués</td>
+<td style="padding:10px;text-align:center"><input type="number" id="manualGoals1" min="0" value="0" style="width:60px;padding:8px;border-radius:8px;border:2px solid rgba(255,255,255,.3);background:rgba(255,255,255,.15);color:#fff;text-align:center;font-size:1rem"></td>
+<td style="padding:10px;text-align:center"><input type="number" id="manualGoals2" min="0" value="0" style="width:60px;padding:8px;border-radius:8px;border:2px solid rgba(255,255,255,.3);background:rgba(255,255,255,.15);color:#fff;text-align:center;font-size:1rem"></td>
+</tr>
+<tr style="border-bottom:1px solid rgba(255,255,255,.2)">
+<td style="padding:10px">🔄 Possessions</td>
+<td style="padding:10px;text-align:center"><input type="number" id="manualPoss1" min="0" value="0" style="width:60px;padding:8px;border-radius:8px;border:2px solid rgba(255,255,255,.3);background:rgba(255,255,255,.15);color:#fff;text-align:center;font-size:1rem"></td>
+<td style="padding:10px;text-align:center"><input type="number" id="manualPoss2" min="0" value="0" style="width:60px;padding:8px;border-radius:8px;border:2px solid rgba(255,255,255,.3);background:rgba(255,255,255,.15);color:#fff;text-align:center;font-size:1rem"></td>
+</tr>
+<tr id="manualBonusRow" style="border-bottom:1px solid rgba(255,255,255,.2);display:none">
+<td style="padding:10px">⭐ <span id="manualBonusLabel">Bonus</span></td>
+<td style="padding:10px;text-align:center"><input type="number" id="manualBonus1" min="0" value="0" style="width:60px;padding:8px;border-radius:8px;border:2px solid rgba(255,255,255,.3);background:rgba(255,255,255,.15);color:#fff;text-align:center;font-size:1rem"></td>
+<td style="padding:10px;text-align:center"><input type="number" id="manualBonus2" min="0" value="0" style="width:60px;padding:8px;border-radius:8px;border:2px solid rgba(255,255,255,.3);background:rgba(255,255,255,.15);color:#fff;text-align:center;font-size:1rem"></td>
+</tr>
+</table>
+</div>
+<div class="grid-2" style="gap:15px">
+<button class="btn btn-secondary" onclick="closeManualScore()">ANNULER</button>
+<button class="btn btn-success" onclick="saveManualScore()">✅ VALIDER</button>
+</div>
+</div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 var s={n:4,d:5,p:1,be:false,bn:'Bonus',bp:1,t:[],m:[],ci:null,s1:0,s2:0,po:1,et:null,ms:false,tl:300,ti:null,ir:false,c1:0,c2:0,b1:0,b2:0,p1:0,p2:0};
@@ -337,13 +397,13 @@ function updateMatches(){
   for(var i=0;i<s.m.length;i++){
     var m=s.m[i];
     var isCurrent=i===s.ci&&!m.pl;
-    html+='<div class="match-item '+(isCurrent?'playing':'')+'"><span style="font-weight:bold;color:rgba(255,255,255,.6);min-width:25px;font-size:.9rem">'+(i+1)+'</span><div style="flex:1;display:flex;align-items:center;gap:6px;font-size:.85rem;font-weight:600"><div class="color-badge" style="background:'+m.t1.c+';width:20px;height:20px;border-width:2px"></div><span>'+m.t1.n+'</span><span style="margin:0 4px">—</span><span>'+m.t2.n+'</span><div class="color-badge" style="background:'+m.t2.c+';width:20px;height:20px;border-width:2px"></div></div>';
+    html+='<div class="match-item '+(isCurrent?'playing':'')+'"><span style="font-weight:bold;color:rgba(255,255,255,.6);min-width:20px;font-size:.85rem">'+(i+1)+'</span><div style="flex:1;display:flex;align-items:center;gap:4px;font-size:.75rem;font-weight:600"><div class="color-badge" style="background:'+m.t1.c+';width:16px;height:16px;border-width:2px"></div><span>'+m.t1.n+'</span><span style="margin:0 2px">—</span><span>'+m.t2.n+'</span><div class="color-badge" style="background:'+m.t2.c+';width:16px;height:16px;border-width:2px"></div></div>';
     if(m.pl){
-      html+='<div style="font-weight:bold;font-size:1rem;min-width:50px;text-align:center"><span style="color:'+(m.w===1?'#38ef7d':'#fff')+'">'+m.s1+'</span>-<span style="color:'+(m.w===2?'#38ef7d':'#fff')+'">'+m.s2+'</span></div>';
+      html+='<div style="font-weight:bold;font-size:.9rem;min-width:40px;text-align:center;white-space:nowrap"><span style="color:'+(m.w===1?'#38ef7d':'#fff')+'">'+m.s1+'</span>-<span style="color:'+(m.w===2?'#38ef7d':'#fff')+'">'+m.s2+'</span></div>';
     }else if(isCurrent){
-      html+='<button class="btn btn-warning" style="padding:6px 12px;min-height:40px;font-size:.85rem" onclick="resumeMatch('+i+')">REPRENDRE</button>';
+      html+='<button class="btn btn-warning" style="padding:6px 10px;min-height:36px;font-size:.75rem" onclick="resumeMatch('+i+')">REPREN</button>';
     }else{
-      html+='<button class="btn btn-primary" style="padding:6px 12px;min-height:40px;font-size:.85rem" onclick="playMatch('+i+')">JOUER</button>';
+      html+='<button class="btn btn-primary" style="padding:6px 10px;min-height:36px;font-size:.75rem" onclick="playMatch('+i+')">JOUER</button>';
     }
     html+='</div>';
   }
@@ -353,39 +413,69 @@ function updateMatches(){
 function playMatch(idx){
   s.ci=idx;
   var m=s.m[idx];
-  s.s1=m.s1!==null?m.s1:0;
-  s.s2=m.s2!==null?m.s2:0;
+  
+  // Réinitialiser complètement le match
+  s.s1=0;
+  s.s2=0;
   s.po=1;
   s.et=null;
   s.ms=false;
   s.tl=s.d*60;
   s.ir=false;
-  s.c1=m.stats.c1||0;
-  s.c2=m.stats.c2||0;
-  s.b1=m.stats.b1||0;
-  s.b2=m.stats.b2||0;
-  s.p1=m.stats.p1||0;
-  s.p2=m.stats.p2||0;
+  s.c1=0;
+  s.c2=0;
+  s.b1=0;
+  s.b2=0;
+  s.p1=0;
+  s.p2=0;
+  
+  // Arrêter le timer s'il tourne
+  if(s.ti){
+    clearInterval(s.ti);
+    s.ti=null;
+  }
+  
   document.getElementById('teamName1').textContent=m.t1.n;
   document.getElementById('teamName2').textContent=m.t2.n;
   document.getElementById('badge1').style.background=m.t1.c;
   document.getElementById('badge2').style.background=m.t2.c;
+  
   var txtColor1=m.t1.c==='#FFFFFF'||m.t1.c==='#fbbf24'?'#000':'#fff';
   var txtColor2=m.t2.c==='#FFFFFF'||m.t2.c==='#fbbf24'?'#000':'#fff';
-  document.getElementById('startButtons').innerHTML='<button class="btn" style="background:'+m.t1.c+';color:'+txtColor1+';width:100%;padding:35px;font-size:1.4rem;font-weight:800" onclick="selectStarter(1)">'+m.t1.n+'</button><button class="btn" style="background:'+m.t2.c+';color:'+txtColor2+';width:100%;padding:35px;font-size:1.4rem;font-weight:800" onclick="selectStarter(2)">'+m.t2.n+'</button>';
+  
+  document.getElementById('startButtons').innerHTML='<button class="btn" style="background:'+m.t1.c+';color:'+txtColor1+';width:100%;padding:30px;font-size:1.3rem;font-weight:800" onclick="selectStarter(1)">'+m.t1.n+'</button><button class="btn" style="background:'+m.t2.c+';color:'+txtColor2+';width:100%;padding:30px;font-size:1.3rem;font-weight:800" onclick="selectStarter(2)">'+m.t2.n+'</button>';
+  
   document.getElementById('bonusBtn').style.display=s.be?'block':'none';
   if(s.be){
     document.getElementById('bonusBtn').innerHTML='⭐ '+s.bn.toUpperCase();
   }
+  
+  // Afficher la phase de sélection
   document.getElementById('startPhase').style.display='block';
   document.getElementById('gamePhase').style.display='none';
+  document.getElementById('launchBtn').style.display='none';
+  
   updateTimer();
+  updateScores();
   showPage('p4');
 }
 
 function resumeMatch(idx){
   s.ci=idx;
   var m=s.m[idx];
+  
+  // Charger les données du match en cours
+  s.s1=m.s1!==null?m.s1:0;
+  s.s2=m.s2!==null?m.s2:0;
+  s.c1=m.stats.c1||0;
+  s.c2=m.stats.c2||0;
+  s.b1=m.stats.b1||0;
+  s.b2=m.stats.b2||0;
+  s.p1=m.stats.p1||0;
+  s.p2=m.stats.p2||0;
+  s.po=s.p1>s.p2?1:2;
+  s.ms=true;
+  
   document.getElementById('teamName1').textContent=m.t1.n;
   document.getElementById('teamName2').textContent=m.t2.n;
   document.getElementById('badge1').style.background=m.t1.c;
@@ -592,6 +682,63 @@ function handleRecovery(isRecovered){
 
 function closeConfirm(){
   document.getElementById('confirmModal').classList.remove('active');
+}
+
+function showManualScoreEntry(){
+  var m=s.m[s.ci];
+  document.getElementById('manualTeam1Name').textContent=m.t1.n;
+  document.getElementById('manualTeam2Name').textContent=m.t2.n;
+  document.getElementById('badge1Manual').style.background=m.t1.c;
+  document.getElementById('badge2Manual').style.background=m.t2.c;
+  
+  // Afficher la ligne bonus si activé
+  if(s.be){
+    document.getElementById('manualBonusRow').style.display='table-row';
+    document.getElementById('manualBonusLabel').textContent=s.bn;
+  }else{
+    document.getElementById('manualBonusRow').style.display='none';
+  }
+  
+  // Réinitialiser les champs
+  document.getElementById('manualScore1').value='0';
+  document.getElementById('manualScore2').value='0';
+  document.getElementById('manualGoals1').value='0';
+  document.getElementById('manualGoals2').value='0';
+  document.getElementById('manualPoss1').value='0';
+  document.getElementById('manualPoss2').value='0';
+  document.getElementById('manualBonus1').value='0';
+  document.getElementById('manualBonus2').value='0';
+  
+  document.getElementById('manualScoreModal').classList.add('active');
+}
+
+function closeManualScore(){
+  document.getElementById('manualScoreModal').classList.remove('active');
+}
+
+function saveManualScore(){
+  var m=s.m[s.ci];
+  
+  // Récupérer les valeurs saisies
+  s.s1=parseInt(document.getElementById('manualScore1').value)||0;
+  s.s2=parseInt(document.getElementById('manualScore2').value)||0;
+  s.c1=parseInt(document.getElementById('manualGoals1').value)||0;
+  s.c2=parseInt(document.getElementById('manualGoals2').value)||0;
+  s.p1=parseInt(document.getElementById('manualPoss1').value)||0;
+  s.p2=parseInt(document.getElementById('manualPoss2').value)||0;
+  s.b1=parseInt(document.getElementById('manualBonus1').value)||0;
+  s.b2=parseInt(document.getElementById('manualBonus2').value)||0;
+  
+  // Enregistrer le match comme terminé
+  m.s1=s.s1;
+  m.s2=s.s2;
+  m.w=s.s1>s.s2?1:(s.s2>s.s1?2:0);
+  m.pl=true;
+  m.stats={c1:s.c1,c2:s.c2,b1:s.b1,b2:s.b2,p1:s.p1,p2:s.p2};
+  s.m[s.ci]=m;
+  
+  closeManualScore();
+  showStats(m);
 }
 
 function confirmReset(){

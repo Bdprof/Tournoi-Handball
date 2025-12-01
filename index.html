@@ -211,6 +211,7 @@ input[type="number"]::placeholder{color:rgba(255,255,255,.6)}
 <div id="statsContent"></div>
 <div id="statsEditContent" style="display:none"></div>
 <button class="btn btn-success" style="width:100%;margin-top:25px;font-size:1.3rem" onclick="closeStats()">✅ OK</button>
+<button class="btn btn-danger" style="width:100%;margin-top:10px;font-size:1.3rem" onclick="cancelStats()">❌ ANNULER</button>
 </div>
 </div>
 
@@ -437,7 +438,6 @@ function launchMatch(){
   s.ms=true;s.p1=s.po===1?1:0;s.p2=s.po===2?1:0;
   document.getElementById('startPhase').style.display='none';
   document.getElementById('gamePhase').style.display='block';
-  document.getElementById('otherFieldBtn').style.display='none';
   updateScores();updatePossession();startTimer();
 }
 
@@ -569,6 +569,14 @@ function closeStats(){
   updateRanking();
   updateMatches();
   showPage('p3');
+}
+
+function cancelStats(){
+  document.getElementById('statsModal').classList.remove('active');
+  s.ci=null;
+  showPage('p4');
+  document.getElementById('startPhase').style.display='block';
+  document.getElementById('otherFieldBtn').style.display='block';
 }
 
 function entrerResultatsAutreT(){

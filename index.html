@@ -166,10 +166,13 @@ input[type="number"]::placeholder{color:rgba(255,255,255,.6)}
 <div class="grid-2" style="margin-top:25px" id="startButtons"></div>
 <button class="btn btn-success" style="width:100%;margin-top:25px;display:none;font-size:1.3rem" id="launchBtn" onclick="launchMatch()">▶️ LANCER LE MATCH</button>
 </div>
+<div class="card">
+<button class="btn btn-primary" style="width:100%;font-size:1.2rem" id="otherFieldBtn" onclick="entrerResultatsAutreT()">📋 SAISIE MANUELLE DES RÉSULTATS</button>
+</div>
 <div id="gamePhase" style="display:none">
 <div class="possession-zone" id="possessionZone">
 <h2 id="possessionTeam" style="margin-bottom:10px;font-size:1.5rem"></h2>
-<div style="font-size:1.1rem;opacity:.9">🤾 POSSESSION</div>
+<div style="font-size:1.1rem;opacity:.9;color:inherit">🤾 POSSESSION</div>
 </div>
 <div class="score-display">
 <div class="score-item" style="text-align:center">
@@ -395,6 +398,7 @@ function playMatch(idx){
   document.getElementById('startPhase').style.display='block';
   document.getElementById('gamePhase').style.display='none';
   document.getElementById('launchBtn').style.display='none';
+  document.getElementById('otherFieldBtn').style.display='block';
   updateTimer();updateScores();showPage('p4');
 }
 
@@ -424,6 +428,7 @@ function launchMatch(){
   s.ms=true;s.p1=s.po===1?1:0;s.p2=s.po===2?1:0;
   document.getElementById('startPhase').style.display='none';
   document.getElementById('gamePhase').style.display='block';
+  document.getElementById('otherFieldBtn').style.display='none';
   updateScores();updatePossession();startTimer();
 }
 
@@ -442,14 +447,16 @@ function updatePossession(){
     zone.style.border='4px solid '+(isLight?'rgba(0,0,0,.3)':'rgba(255,255,255,.8)');
     zone.style.boxShadow='0 0 30px '+m.t1.c+'80';
     teamName.textContent=m.t1.n;
-    teamName.style.color=isLight?'#000':'#fff';
+    teamName.style.color=m.t1.c==='#FFFFFF'?'#000':'#fff';
+    document.getElementById('possessionZone').style.color=m.t1.c==='#FFFFFF'?'#000':'#fff';
   }else{
     var isLight=m.t2.c==='#FFFFFF'||m.t2.c==='#fbbf24';
     zone.style.background=isLight?m.t2.c:m.t2.c+'dd';
     zone.style.border='4px solid '+(isLight?'rgba(0,0,0,.3)':'rgba(255,255,255,.8)');
     zone.style.boxShadow='0 0 30px '+m.t2.c+'80';
     teamName.textContent=m.t2.n;
-    teamName.style.color=isLight?'#000':'#fff';
+    teamName.style.color=m.t2.c==='#FFFFFF'?'#000':'#fff';
+    document.getElementById('possessionZone').style.color=m.t2.c==='#FFFFFF'?'#000':'#fff';
   }
 }
 
@@ -565,8 +572,26 @@ function closeStats(){
   s.ci=null;backToTournament();
 }
 
+function entrerResultatsAutreT(){
+  var m=s.m[s.ci];
+  s.s1=0;s.s2=0;s.c1=0;s.c2=0;s.b1=0;s.b2=0;s.p1=0;s.p2=0;
+  var ratio1='0.00';var ratio2='0.00';
+  var winner='En attente';
+  var html='<div style="text-align:center;margin-bottom:25px;font-size:1.6rem;color:#38ef7d;font-weight:800">🏆 '+winner+'</div><table class="stats-table"><tr><th style="text-align:left">Statistique</th><th>'+m.t1.n+'</th><th>'+m.t2.n+'</th></tr>';
+  html+='<tr><td style="text-align:left;font-weight:700">Score final</td><td><input type="number" id="edit_s1" value="0" min="0"></td><td><input type="number" id="edit_s2" value="0" min="0"></td></tr>';
+  html+='<tr><td style="text-align:left">🥅 Buts marqués</td><td><input type="number" id="edit_c1" value="0" min="0"></td><td><input type="number" id="edit_c2" value="0" min="0"></td></tr>';
+  if(s.be){html+='<tr><td style="text-align:left">⭐ '+s.bn+'</td><td><input type="number" id="edit_b1" value="0" min="0"></td><td><input type="number" id="edit_b2" value="0" min="0"></td></tr>';}
+  html+='<tr><td style="text-align:left">🔄 Possessions</td><td><input type="number" id="edit_p1" value="0" min="0"></td><td><input type="number" id="edit_p2" value="0" min="0"></td></tr>';
+  html+='</table>';
+  document.getElementById('statsContent').innerHTML=html;
+  document.getElementById('statsEditContent').innerHTML='';
+  document.getElementById('statsModal').classList.add('active');
+}
+
 function backToTournament(){
-  stopTimer();showPage('p3');updateRanking();updateMatches();
+  stopTimer();
+  document.getElementById('otherFieldBtn').style.display='block';
+  showPage('p3');updateRanking();updateMatches();
 }
 
 function showConfirm(text,callback,isRecovery){

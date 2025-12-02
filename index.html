@@ -61,9 +61,6 @@ input[type="number"]::placeholder{color:rgba(255,255,255,.6)}
 .back-btn{width:56px;height:56px;border-radius:16px;background:rgba(255,255,255,.2);border:3px solid rgba(255,255,255,.4);color:#fff;font-size:1.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:900}
 .play-pause-btn{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#11998e,#38ef7d);border:none;color:#fff;font-size:2.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(17,153,142,.5)}
 .bonus-section{margin:25px 0;padding:20px;background:rgba(255,191,0,.2);border-radius:16px;border:3px solid rgba(255,191,0,.4)}
-.stats-tabs{display:flex;gap:10px;margin-bottom:20px}
-.stats-tab-btn{padding:10px 15px;border:none;border-radius:10px;background:rgba(255,255,255,.2);color:#fff;font-weight:700;cursor:pointer;font-size:.9rem}
-.stats-tab-btn.active{background:linear-gradient(135deg,#11998e,#38ef7d);color:#fff}
 @media (max-width: 768px) {
   h1{font-size:1.5rem;margin-bottom:10px}
   h2{font-size:1.1rem;margin-bottom:10px}
@@ -205,9 +202,7 @@ input[type="number"]::placeholder{color:rgba(255,255,255,.6)}
 <div id="statsModal" class="modal">
 <div class="modal-content">
 <h2 style="text-align:center;margin-bottom:25px;font-size:1.8rem">📊 ÉDITER LES RÉSULTATS</h2>
-
 <div id="statsContent"></div>
-<div id="statsEditContent" style="display:none"></div>
 <button class="btn btn-success" style="width:100%;margin-top:25px;font-size:1.3rem" onclick="closeStats()">✅ OK</button>
 <button class="btn btn-danger" style="width:100%;margin-top:10px;font-size:1.3rem" onclick="cancelStats()">❌ ANNULER</button>
 </div>
@@ -232,7 +227,7 @@ input[type="number"]::placeholder{color:rgba(255,255,255,.6)}
 <script>
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('service-worker.js').catch(function(err){
-    console.log('Service Worker registration failed: ', err);
+    console.log('Service Worker enregistré ou déjà actif');
   });
 }
 
@@ -375,4 +370,20 @@ function updateRanking(){
 function updateMatches(){
   var played=0;
   for(var i=0;i<s.m.length;i++){
-    if(s.m[i
+    if(s.m[i].pl)played++;
+  }
+  document.getElementById('matchCounter').textContent=played+'/'+s.m.length;
+  var html='';
+  for(var i=0;i<s.m.length;i++){
+    var m=s.m[i];
+    var isCurrent=i===s.ci&&!m.pl;
+    html+='<div class="match-item '+(isCurrent?'playing':'')+'"><span style="font-weight:bold;color:rgba(255,255,255,.6);min-width:20px;font-size:.85rem">'+(i+1)+'</span><div style="flex:1;display:flex;align-items:center;gap:4px;font-size:.75rem;font-weight:600"><div class="color-badge" style="background:'+m.t1.c+';width:16px;height:16px;border-width:2px"></div><span>'+m.t1.n+'</span><span style="margin:0 2px">—</span><span>'+m.t2.n+'</span><div class="color-badge" style="background:'+m.t2.c+';width:16px;height:16px;border-width:2px"></div></div>';
+    if(m.pl){
+      html+='<div style="font-weight:bold;font-size:.9rem;min-width:40px;text-align:center;white-space:nowrap"><span style="color:'+(m.w===1?'#38ef7d':'#fff')+'">'+m.s1+'</span>-<span style="color:'+(m.w===2?'#38ef7d':'#fff')+'">'+m.s2+'</span></div>';
+    }else if(isCurrent){
+      html+='<button class="btn btn-warning" style="padding:6px 10px;min-height:36px;font-size:.75rem" onclick="resumeMatch('+i+')">REPREN</button>';
+    }else{
+      html+='<button class="btn btn-primary" style="padding:6px 10px;min-height:36px;font-size:.75rem" onclick="playMatch('+i+')">JOUER</button>';
+    }
+    html+='</div>';
+  }

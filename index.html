@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tournoi Handball">
+<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/Bdprof/Tournoi-Handball/refs/heads/main/Logo%20apps%20tournoi%20Handball.png">
 <title>🤾 Tournoi Handball</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -123,7 +126,9 @@ input[type="number"]::placeholder{color:rgba(255,255,255,.6)}
 </div>
 </div>
 <button class="btn btn-success" style="width:100%;margin-top:25px;font-size:1.3rem" onclick="goToPage2()">SUIVANT →</button>
-<div style="text-align:center;font-size:10rem;margin:40px 0;opacity:.3">🤾</div>
+<div style="text-align:center;margin:40px 0">
+<img src="https://raw.githubusercontent.com/Bdprof/Tournoi-Handball/refs/heads/main/Accueil%20apps%20tournoi%20Handball.png" alt="Handball" style="max-width:100%;height:auto;max-height:200px;opacity:.9">
+</div>
 </div>
 
 <div id="p2" class="page">
@@ -354,16 +359,19 @@ function updateMatches(){
   let html='';
   state.matches.forEach((m,i)=>{
     const isCurrent=i===state.currentMatchIdx&&!m.played;
-    html+=`<div class="match-item ${isCurrent?'playing':''}"><span style="font-weight:bold;color:rgba(255,255,255,.6);min-width:20px;font-size:.85rem">${i+1}</span><div style="flex:1;display:flex;align-items:center;gap:4px;font-size:.75rem;font-weight:600"><div class="color-badge" style="background:${m.t1.color};width:16px;height:16px;border-width:2px"></div><span>${m.t1.name}</span><span style="margin:0 2px">—</span><span>${m.t2.name}</span><div class="color-badge" style="background:${m.t2.color};width:16px;height:16px;border-width:2px"></div></div>`;
+    html+=`<div class="match-item ${isCurrent?'playing':''}"><span style="font-weight:bold;color:rgba(255,255,255,.6);min-width:20px;font-size:.85rem">${i+1}</span><div style="flex:1;display:flex;align-items:center;gap:8px;font-size:.9rem;font-weight:600">`;
+    html+=`<div style="flex:1;display:flex;align-items:center;gap:4px"><div class="color-badge" style="background:${m.t1.color};width:16px;height:16px;border-width:2px"></div><span>${m.t1.name}</span></div>`;
     
     if(m.played){
-      html+=`<div style="font-weight:bold;font-size:.9rem;min-width:40px;text-align:center;white-space:nowrap"><span style="color:${m.winner===1?'#38ef7d':'#fff'}">${m.s1}</span>-<span style="color:${m.winner===2?'#38ef7d':'#fff'}">${m.s2}</span></div>`;
+      html+=`<div style="font-weight:bold;font-size:1rem;min-width:50px;text-align:center;white-space:nowrap"><span style="color:${m.winner===1?'#38ef7d':'#fff'}">${m.s1}</span>-<span style="color:${m.winner===2?'#38ef7d':'#fff'}">${m.s2}</span></div>`;
     }else if(isCurrent){
       html+=`<button class="btn btn-warning" style="padding:6px 10px;min-height:36px;font-size:.75rem" onclick="resumeMatch(${i})">REPREN</button>`;
     }else{
       html+=`<button class="btn btn-primary" style="padding:6px 10px;min-height:36px;font-size:.75rem" onclick="playMatch(${i})">JOUER</button>`;
     }
-    html+='</div>';
+    
+    html+=`<div style="flex:1;display:flex;align-items:center;gap:4px;justify-content:flex-end"><span>${m.t2.name}</span><div class="color-badge" style="background:${m.t2.color};width:16px;height:16px;border-width:2px"></div></div>`;
+    html+='</div></div>';
   });
   document.getElementById('matchesList').innerHTML=html;
 }
@@ -592,8 +600,8 @@ function showStats(m){
   const poss1=m.stats.poss1||1;
   const poss2=m.stats.poss2||1;
   
-  const shotsPerPoss1=(totalShots1/poss1).toFixed(2);
-  const shotsPerPoss2=(totalShots2/poss2).toFixed(2);
+  const shotsPerPoss1=(totalShots1/poss1*100).toFixed(1);
+  const shotsPerPoss2=(totalShots2/poss2*100).toFixed(1);
   const shotsAccuracy1=totalShots1>0?(shots1/totalShots1*100).toFixed(1):'0.0';
   const shotsAccuracy2=totalShots2>0?(shots2/totalShots2*100).toFixed(1):'0.0';
   
@@ -603,7 +611,7 @@ function showStats(m){
   html+=`<tr><td style="text-align:left">🥅 Buts marqués</td><td>${shots1}</td><td>${shots2}</td></tr>`;
   html+=`<tr><td style="text-align:left">❌ Tirs ratés</td><td>${missedShots1}</td><td>${missedShots2}</td></tr>`;
   html+=`<tr><td style="text-align:left">🔄 Possessions</td><td>${poss1}</td><td>${poss2}</td></tr>`;
-  html+=`<tr><td style="text-align:left">📊 Tirs/Possession</td><td><strong>${shotsPerPoss1}</strong></td><td><strong>${shotsPerPoss2}</strong></td></tr>`;
+  html+=`<tr><td style="text-align:left">📊 Tirs/Possession</td><td><strong>${shotsPerPoss1}%</strong></td><td><strong>${shotsPerPoss2}%</strong></td></tr>`;
   html+=`<tr><td style="text-align:left">🎯 Précision</td><td><strong>${shotsAccuracy1}%</strong></td><td><strong>${shotsAccuracy2}%</strong></td></tr>`;
   html+='</table>';
   
@@ -629,8 +637,7 @@ function showEditForm(){
   }
   const m=state.matches[state.currentMatchIdx];
   let html=`<table class="stats-table"><tr><th style="text-align:left">Statistique</th><th>${m.t1.name}</th><th>${m.t2.name}</th></tr>`;
-  html+=`<tr><td style="text-align:left;font-weight:700">Score final</td><td><input type="number" id="edit_s1" value="0" min="0"></td><td><input type="number" id="edit_s2" value="0" min="0"></td></tr>`;
-  html+=`<tr><td style="text-align:left">🥅 Buts marqués</td><td><input type="number" id="edit_shots1" value="0" min="0"></td><td><input type="number" id="edit_shots2" value="0" min="0"></td></tr>`;
+  html+=`<tr><td style="text-align:left;font-weight:700">🥅 Buts (Score final)</td><td><input type="number" id="edit_shots1" value="0" min="0"></td><td><input type="number" id="edit_shots2" value="0" min="0"></td></tr>`;
   html+=`<tr><td style="text-align:left">❌ Tirs ratés</td><td><input type="number" id="edit_missed1" value="0" min="0"></td><td><input type="number" id="edit_missed2" value="0" min="0"></td></tr>`;
   html+=`<tr><td style="text-align:left">🔄 Possessions</td><td><input type="number" id="edit_poss1" value="1" min="1"></td><td><input type="number" id="edit_poss2" value="1" min="1"></td></tr>`;
   html+='</table>';
@@ -644,19 +651,26 @@ function showEditForm(){
 
 function closeStats(){
   const m=state.matches[state.currentMatchIdx];
-  m.s1=parseInt(document.getElementById('edit_s1').value)||0;
-  m.s2=parseInt(document.getElementById('edit_s2').value)||0;
+  const shots1=parseInt(document.getElementById('edit_shots1').value)||0;
+  const shots2=parseInt(document.getElementById('edit_shots2').value)||0;
+  const missed1=parseInt(document.getElementById('edit_missed1').value)||0;
+  const missed2=parseInt(document.getElementById('edit_missed2').value)||0;
+  const poss1=parseInt(document.getElementById('edit_poss1').value)||1;
+  const poss2=parseInt(document.getElementById('edit_poss2').value)||1;
+  
+  m.s1=shots1;
+  m.s2=shots2;
   m.winner=m.s1>m.s2?1:(m.s2>m.s1?2:0);
   m.played=true;
   m.stats={
-    shots1:parseInt(document.getElementById('edit_shots1').value)||0,
-    shots2:parseInt(document.getElementById('edit_shots2').value)||0,
+    shots1:shots1,
+    shots2:shots2,
     bonus1:0,
     bonus2:0,
-    poss1:parseInt(document.getElementById('edit_poss1').value)||1,
-    poss2:parseInt(document.getElementById('edit_poss2').value)||1,
-    missedShots1:parseInt(document.getElementById('edit_missed1').value)||0,
-    missedShots2:parseInt(document.getElementById('edit_missed2').value)||0
+    poss1:poss1,
+    poss2:poss2,
+    missedShots1:missed1,
+    missedShots2:missed2
   };
   
   document.getElementById('statsModal').classList.remove('active');
@@ -797,9 +811,29 @@ function exportPDF(){
   state.matches.forEach((m,i)=>{
     if(y>270){doc.addPage();y=20;}
     const result=m.played?`${m.s1}-${m.s2}${m.winner===0?' (nul)':''}`:' À jouer';
+    const shots1=m.stats.shots1||0;
+    const shots2=m.stats.shots2||0;
+    const missed1=m.stats.missedShots1||0;
+    const missed2=m.stats.missedShots2||0;
+    const total1=shots1+missed1;
+    const total2=shots2+missed2;
+    const poss1=m.stats.poss1||1;
+    const poss2=m.stats.poss2||1;
+    const shotsPerPoss1=m.played?(total1/poss1*100).toFixed(1):'0.0';
+    const shotsPerPoss2=m.played?(total2/poss2*100).toFixed(1):'0.0';
+    const accuracy1=m.played&&total1>0?(shots1/total1*100).toFixed(1):'0.0';
+    const accuracy2=m.played&&total2>0?(shots2/total2*100).toFixed(1):'0.0';
+    
     doc.text(`${i+1}. ${m.t1.name} - ${m.t2.name}`,20,y);
     doc.text(result,150,y);
     y+=6;
+    if(m.played){
+      doc.setFontSize(8);
+      doc.text(`Tirs: ${total1} (${accuracy1}%) | Possess: ${poss1} (${shotsPerPoss1}%)`,22,y);
+      doc.text(`Tirs: ${total2} (${accuracy2}%) | Possess: ${poss2} (${shotsPerPoss2}%)`,22,y+4);
+      doc.setFontSize(9);
+      y+=8;
+    }
   });
   
   const pageCount=doc.internal.getNumberOfPages();

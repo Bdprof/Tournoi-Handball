@@ -202,9 +202,15 @@ input[type="number"]::placeholder{color:rgba(255,255,255,.6)}
 
 <div id="statsModal" class="modal">
 <div class="modal-content">
-<h2 style="text-align:center;margin-bottom:25px;font-size:1.8rem">📊 RÉSULTATS</h2>
+<h2 style="text-align:center;margin-bottom:25px;font-size:1.8rem" id="statsTitle">📊 RÉSULTATS</h2>
 <div id="statsContent"></div>
-<button class="btn btn-success" style="width:100%;margin-top:25px;font-size:1.3rem" id="statsOkBtn" onclick="closeStatsView()">✅ OK</button>
+<div id="statsButtonsView" style="display:none">
+<button class="btn btn-success" style="width:100%;margin-top:25px;font-size:1.3rem" id="statsOkViewBtn">✅ OK</button>
+</div>
+<div id="statsButtonsEdit" style="display:none">
+<button class="btn btn-success" style="width:100%;margin-top:25px;font-size:1.3rem" onclick="closeStats()">✅ OK</button>
+<button class="btn btn-danger" style="width:100%;margin-top:10px;font-size:1.3rem" onclick="cancelStatsEdit()">❌ ANNULER</button>
+</div>
 </div>
 </div>
 
@@ -602,7 +608,18 @@ function showStats(m){
   html+='</table>';
   
   document.getElementById('statsContent').innerHTML=html;
+  document.getElementById('statsButtonsView').style.display='block';
+  document.getElementById('statsButtonsEdit').style.display='none';
+  document.getElementById('statsTitle').textContent='📊 RÉSULTATS';
   document.getElementById('statsModal').classList.add('active');
+  
+  document.getElementById('statsOkViewBtn').onclick=function(){
+    document.getElementById('statsModal').classList.remove('active');
+    state.currentMatchIdx=null;
+    updateRanking();
+    updateMatches();
+    showPage('p3');
+  };
 }
 
 function showEditForm(){
@@ -619,6 +636,9 @@ function showEditForm(){
   html+='</table>';
   
   document.getElementById('statsContent').innerHTML=html;
+  document.getElementById('statsButtonsEdit').style.display='block';
+  document.getElementById('statsButtonsView').style.display='none';
+  document.getElementById('statsTitle').textContent='📋 SAISIE MANUELLE DES RÉSULTATS';
   document.getElementById('statsModal').classList.add('active');
 }
 

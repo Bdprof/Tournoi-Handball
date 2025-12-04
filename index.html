@@ -1,4 +1,6 @@
-function validStatsEdit(){
+function undoLastAction(){
+  if(!state.matchStarted)return;
+}function validStatsEdit(){
   closeStats();
 }
 
@@ -191,7 +193,7 @@ input[type="number"]::placeholder{color:rgba(255,255,255,.6)}
 <div class="score" id="score1">0</div>
 </div>
 <div style="display:flex;align-items:center;justify-content:center">
-<button id="btnUndo" style="background:none;border:none;color:#fff;font-size:2.5rem;cursor:pointer;padding:10px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))" title="Annuler la dernière action">⏮️</button>
+<button onclick="if(state.matchStarted){state.score1=Math.max(0,state.score1-state.pointsPerGoal);state.score2=Math.max(0,state.score2-state.pointsPerGoal);state.shots1=Math.max(0,state.shots1-1);state.shots2=Math.max(0,state.shots2-1);state.missedShots1=Math.max(0,state.missedShots1-1);state.missedShots2=Math.max(0,state.missedShots2-1);state.possession=state.possession===1?2:1;updateScores();updatePossession();}" style="background:none;border:none;color:#fff;font-size:2.5rem;cursor:pointer;padding:10px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))" title="Annuler la dernière action">⏮️</button>
 </div>
 <div class="score-item" style="text-align:center">
 <div style="display:flex;align-items:center;gap:8px;justify-content:center;font-size:1rem;font-weight:700">
@@ -254,8 +256,7 @@ let state={
   numTeams:4,duration:5,pointsPerGoal:1,bonusEnabled:false,bonusName:'Bonus',bonusPoints:1,
   teams:[],matches:[],currentMatchIdx:null,score1:0,score2:0,possession:1,
   matchStarted:false,timeLeft:300,timerInterval:null,timerRunning:false,
-  shots1:0,shots2:0,bonus1:0,bonus2:0,possessions1:0,possessions2:0,missedShots1:0,missedShots2:0,
-  lastPage:'p1',actionsHistory:[]
+  shots1:0,shots2:0,bonus1:0,bonus2:0,possessions1:0,possessions2:0,missedShots1:0,missedShots2:0
 };
 
 function setTeams(n){
@@ -464,16 +465,10 @@ function launchMatch(){
   state.matchStarted=true;
   state.possessions1=state.possession===1?1:0;
   state.possessions2=state.possession===2?1:0;
-  state.actionsHistory=[];
   
   document.getElementById('startPhase').style.display='none';
   document.getElementById('statsEditBtn').parentElement.style.display='none';
   document.getElementById('gamePhase').style.display='block';
-  
-  const btn=document.getElementById('btnUndo');
-  if(btn){
-    btn.onclick=()=>undoLastAction();
-  }
   
   updateScores();
   updatePossession();

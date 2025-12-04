@@ -3,6 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tournoi Handball">
+<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/Bdprof/Tournoi-Handball/refs/heads/main/Logo%20apps%20tournoi%20Handball%202.png">
 <title>🤾 Tournoi Handball</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -24,24 +28,56 @@ h2{font-size:1.3rem;margin-bottom:15px;font-weight:700}
 .counter{display:flex;align-items:center;gap:12px;margin:10px 0}
 .counter button{width:50px;height:50px;font-size:1.8rem;background:rgba(255,255,255,.2);border:3px solid rgba(255,255,255,.4);color:#fff;border-radius:16px;cursor:pointer;font-weight:900}
 .counter span{flex:1;text-align:center;font-size:1.8rem;font-weight:900}
+.team-selector{display:flex;align-items:center;gap:15px;padding:18px;background:rgba(0,0,0,.2);border-radius:16px;margin-bottom:12px}
 .color-badge{width:48px;height:48px;border-radius:50%;border:4px solid rgba(255,255,255,.5);box-shadow:0 4px 12px rgba(0,0,0,.3)}
 select{flex:1;padding:15px;border-radius:12px;border:3px solid rgba(255,255,255,.3);background:rgba(255,255,255,.15);color:#fff;font-size:1.1rem;font-weight:600;min-height:56px}
 input[type="checkbox"]{width:32px;height:32px;cursor:pointer}
 input[type="text"]{width:100%;padding:18px;border-radius:12px;border:3px solid rgba(255,255,255,.3);background:rgba(255,255,255,.15);color:#fff;font-size:1.1rem;margin:10px 0;font-weight:600}
 input[type="text"]::placeholder{color:rgba(255,255,255,.6)}
 input[type="number"]{padding:10px;border-radius:8px;border:2px solid rgba(255,255,255,.3);background:rgba(255,255,255,.15);color:#fff;font-size:1rem;font-weight:600;text-align:center}
+input[type="number"]::placeholder{color:rgba(255,255,255,.6)}
 .ranking-table{width:100%;border-collapse:collapse;margin:20px 0}
 .ranking-table th{background:rgba(255,255,255,.2);padding:8px 4px;font-size:.75rem;border-bottom:3px solid rgba(255,255,255,.3);font-weight:700}
 .ranking-table td{padding:8px 4px;text-align:center;border-bottom:1px solid rgba(255,255,255,.1);font-size:.8rem}
-.timer{font-size:2.5rem;font-weight:900;text-align:center;padding:15px;background:rgba(255,255,255,.2);border-radius:20px;margin:15px 0}
+.match-item{background:rgba(0,0,0,.2);border-radius:12px;padding:10px;margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:.9rem}
+.match-item.playing{border:4px solid #f5576c;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}
+.timer{font-size:2.5rem;font-weight:900;text-align:center;padding:15px;background:rgba(255,255,255,.2);border-radius:20px;margin:15px 0;text-shadow:0 4px 12px rgba(0,0,0,.3)}
+.timer.warning{color:#ff6a00;animation:blink 1s infinite}
+@keyframes blink{0%,50%{opacity:1}51%,100%{opacity:.3}}
 .possession-zone{padding:25px 20px;border-radius:20px;text-align:center;margin:15px 0;box-shadow:0 8px 24px rgba(0,0,0,.3)}
 .score-display{display:flex;justify-content:space-around;margin:15px 0;padding:15px;background:rgba(255,255,255,.15);border-radius:20px}
-.score-item .score{font-size:2.5rem;font-weight:900;margin-top:8px}
-.action-btn{padding:18px 12px;font-size:1rem;border-radius:16px;border:none;cursor:pointer;font-weight:800;min-height:60px;box-shadow:0 8px 24px rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;gap:6px}
+.score-item .score{font-size:2.5rem;font-weight:900;margin-top:8px;text-shadow:0 4px 12px rgba(0,0,0,.3)}
+.action-buttons{margin:15px 0}
+.action-btn{padding:18px 12px;font-size:1rem;border-radius:16px;border:none;cursor:pointer;font-weight:800;min-height:60px;box-shadow:0 8px 24px rgba(0,0,0,.3);text-transform:uppercase;letter-spacing:.5px;display:flex;align-items:center;justify-content:center;gap:6px}
+.action-btn:active{transform:scale(.95)}
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:1000;align-items:center;justify-content:center;padding:20px;overflow-y:auto}
 .modal.active{display:flex}
 .modal-content{background:linear-gradient(135deg,#1e3a8a,#3b82f6);border-radius:24px;padding:35px;max-width:550px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.5);border:2px solid rgba(255,255,255,.2);max-height:90vh;overflow-y:auto}
-.team-selector{display:flex;align-items:center;gap:15px;padding:18px;background:rgba(0,0,0,.2);border-radius:16px;margin-bottom:12px}
+.stats-table{width:100%;margin:25px 0;border-collapse:collapse}
+.stats-table th,.stats-table td{padding:15px;text-align:center;border-bottom:1px solid rgba(255,255,255,.2)}
+.stats-table th{background:rgba(255,255,255,.2);font-weight:700;font-size:1.1rem}
+.stats-table td:first-child{text-align:left}
+.stats-table input[type="number"]{width:90%;max-width:100px}
+.header-bar{display:flex;align-items:center;justify-content:space-between;padding:20px;background:rgba(255,255,255,.15);border-radius:20px;margin-bottom:20px;backdrop-filter:blur(20px)}
+.back-btn{width:56px;height:56px;border-radius:16px;background:rgba(255,255,255,.2);border:3px solid rgba(255,255,255,.4);color:#fff;font-size:1.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:900}
+.play-pause-btn{width:70px;height:70px;border-radius:50%;background:linear-gradient(135deg,#11998e,#38ef7d);border:none;color:#fff;font-size:2.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(17,153,142,.5)}
+.bonus-section{margin:25px 0;padding:20px;background:rgba(255,191,0,.2);border-radius:16px;border:3px solid rgba(255,191,0,.4)}
+@media (max-width:768px){
+  h1{font-size:1.5rem;margin-bottom:10px}
+  h2{font-size:1.1rem;margin-bottom:10px}
+  .card{padding:15px;margin-bottom:12px}
+  .btn{padding:10px 16px;font-size:.85rem;min-height:44px}
+  .counter button{width:44px;height:44px;font-size:1.5rem}
+  .counter span{font-size:1.5rem}
+  .action-btn{padding:14px 10px;font-size:.9rem;min-height:55px}
+  .ranking-table th{padding:6px 2px;font-size:.65rem}
+  .ranking-table td{padding:6px 2px;font-size:.7rem}
+  .match-item{padding:8px;gap:6px;font-size:.8rem}
+  .timer{font-size:2rem;padding:12px}
+  .score-item .score{font-size:2rem}
+  input[type="number"]{width:70px;font-size:.9rem}
+}
 </style>
 </head>
 <body>
@@ -50,8 +86,7 @@ input[type="number"]{padding:10px;border-radius:8px;border:2px solid rgba(255,25
 <h1>🤾 TOURNOI HANDBALL</h1>
 <div class="card">
 <h2>⚙️ Configuration</h2>
-<div style="margin:25px 0">
-<strong style="display:block;margin-bottom:15px;font-size:1.2rem">Nombre d'équipes :</strong>
+<div style="margin:25px 0"><strong style="display:block;margin-bottom:15px;font-size:1.2rem">Nombre d'équipes :</strong>
 <div class="grid-4">
 <button class="btn btn-secondary" onclick="setTeams(3)">3</button>
 <button class="btn btn-primary" onclick="setTeams(4)">4</button>
@@ -59,24 +94,41 @@ input[type="number"]{padding:10px;border-radius:8px;border:2px solid rgba(255,25
 <button class="btn btn-secondary" onclick="setTeams(6)">6</button>
 </div>
 </div>
-<div style="margin:25px 0">
-<strong style="font-size:1.2rem">Durée (minutes) :</strong>
+<div><strong style="font-size:1.2rem">Durée (minutes) :</strong>
 <div class="counter">
 <button onclick="adjustDuration(-1)">−</button>
 <span id="dur">5</span>
 <button onclick="adjustDuration(1)">+</button>
 </div>
 </div>
-<div style="margin:25px 0">
-<strong style="font-size:1.2rem">Points par but :</strong>
+<div><strong style="font-size:1.2rem">Points par but :</strong>
 <div class="counter">
 <button onclick="adjustPoints(-1)">−</button>
 <span id="pts">1</span>
 <button onclick="adjustPoints(1)">+</button>
 </div>
 </div>
+<div class="bonus-section">
+<label style="display:flex;align-items:center;gap:15px;cursor:pointer;margin-bottom:20px">
+<input type="checkbox" id="bonusCheck" onclick="toggleBonus()">
+<strong style="font-size:1.2rem">⭐ ACTIVER BONUS</strong>
+</label>
+<div id="bonusOpt" style="display:none">
+<label style="display:block;margin-bottom:10px;font-size:1.1rem;font-weight:700">Nom du bonus :</label>
+<input type="text" id="bonusName" value="" placeholder="Ex: 7m penalty, action spéciale...">
+<strong style="display:block;margin-top:20px;font-size:1.2rem">Points par bonus :</strong>
+<div class="counter">
+<button onclick="adjustBonusPoints(-1)">−</button>
+<span id="bonusPts">1</span>
+<button onclick="adjustBonusPoints(1)">+</button>
+</div>
+</div>
+</div>
 </div>
 <button class="btn btn-success" style="width:100%;margin-top:25px;font-size:1.3rem" onclick="goToPage2()">SUIVANT →</button>
+<div style="text-align:center;margin:40px 0">
+<img src="https://raw.githubusercontent.com/Bdprof/Tournoi-Handball/refs/heads/main/Accueil%20apps%20tournoi%20Handball.png" alt="Handball" style="width:75%;aspect-ratio:1;object-fit:contain;opacity:.9;margin:0 auto">
+</div>
 </div>
 
 <div id="p2" class="page">
@@ -91,64 +143,111 @@ input[type="number"]{padding:10px;border-radius:8px;border:2px solid rgba(255,25
 <div id="p3" class="page">
 <h1>🏆 TOURNOI HANDBALL</h1>
 <div class="card">
-<h2>📊 CLASSEMENT</h2>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+<h2 style="margin:0">📊 CLASSEMENT</h2>
+<button class="btn btn-primary" style="padding:12px 20px" onclick="exportPDF()">📄 PDF</button>
+</div>
 <table class="ranking-table" id="rankingTable"></table>
 </div>
 <div class="card">
-<h2>⚽ MATCHS</h2>
+<h2>⚽ MATCHS <span style="display:inline-block;padding:8px 16px;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.4);border-radius:25px;font-size:1rem;font-weight:800;margin-left:10px" id="matchCounter">0/0</span></h2>
 <div id="matchesList"></div>
 </div>
-<button class="btn btn-danger" style="width:100%;margin-top:25px;font-size:1.3rem" onclick="resetTournament()">🔄 NOUVEAU TOURNOI</button>
+<button class="btn btn-danger" style="width:100%;margin-top:25px;font-size:1.3rem" onclick="confirmReset()">🔄 NOUVEAU TOURNOI</button>
 </div>
 
 <div id="p4" class="page">
-<div style="text-align:center;margin:20px 0">
+<div class="header-bar">
+<button class="back-btn" onclick="backToTournament()">←</button>
 <div class="timer" id="timer">5:00</div>
+<button class="play-pause-btn" id="playPauseBtn" onclick="toggleTimer()">▶</button>
 </div>
 <div id="startPhase" class="card">
 <h2 style="text-align:center">QUI ENGAGE ?</h2>
 <div class="grid-2" style="margin-top:25px" id="startButtons"></div>
 <button class="btn btn-success" style="width:100%;margin-top:25px;display:none;font-size:1.3rem" id="launchBtn" onclick="launchMatch()">▶️ LANCER LE MATCH</button>
 </div>
+<div class="card">
+<button class="btn btn-primary" style="width:100%;font-size:1.2rem" id="statsEditBtn" onclick="showEditForm()">📋 SAISIE MANUELLE</button>
+</div>
 <div id="gamePhase" style="display:none">
 <div class="possession-zone" id="possessionZone">
 <h2 id="possessionTeam" style="margin-bottom:10px;font-size:1.5rem"></h2>
-<div style="font-size:1.1rem;opacity:.9">🤾 POSSESSION</div>
+<div style="font-size:1.1rem;opacity:.9;color:inherit">🤾 POSSESSION</div>
 </div>
 <div class="score-display">
 <div class="score-item" style="text-align:center">
+<div style="display:flex;align-items:center;gap:8px;justify-content:center;font-size:1rem;font-weight:700">
+<div class="color-badge" id="badge1" style="width:36px;height:36px"></div>
 <span id="teamName1"></span>
+</div>
 <div class="score" id="score1">0</div>
 </div>
+<div style="display:flex;align-items:center;justify-content:center">
+<button onclick="if(state.matchStarted){state.score1=Math.max(0,state.score1-state.pointsPerGoal);state.score2=Math.max(0,state.score2-state.pointsPerGoal);state.shots1=Math.max(0,state.shots1-1);state.shots2=Math.max(0,state.shots2-1);state.missedShots1=Math.max(0,state.missedShots1-1);state.missedShots2=Math.max(0,state.missedShots2-1);state.possession=state.possession===1?2:1;updateScores();updatePossession();}" style="background:none;border:none;color:#fff;font-size:2.5rem;cursor:pointer;padding:10px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))" title="Annuler la dernière action">⏮️</button>
+</div>
 <div class="score-item" style="text-align:center">
+<div style="display:flex;align-items:center;gap:8px;justify-content:center;font-size:1rem;font-weight:700">
+<div class="color-badge" id="badge2" style="width:36px;height:36px"></div>
 <span id="teamName2"></span>
+</div>
 <div class="score" id="score2">0</div>
 </div>
 </div>
-<div class="action-buttons" style="margin:15px 0">
+<div class="action-buttons">
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-bottom:15px">
 <button class="action-btn" style="background:linear-gradient(135deg,#11998e,#38ef7d);color:#fff" onclick="scoreGoal()">🥅 BUT</button>
 <button class="action-btn" style="background:linear-gradient(135deg,#ee0979,#ff6a00);color:#fff" onclick="missedShot()">❌ TIR RATÉ</button>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px">
+<button class="action-btn" id="bonusBtn" style="background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;display:none" onclick="scoreBonus()">⭐ BONUS</button>
 <button class="action-btn" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff" onclick="turnover()">🔄 PERTE</button>
-<button class="action-btn" style="background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff" onclick="endMatch()">🏁 TERMINER</button>
 </div>
 </div>
+<button class="btn btn-warning" style="width:100%;margin-top:15px;font-size:1.2rem;min-height:55px" onclick="confirmEndMatch()">🏁 TERMINER</button>
 </div>
-<button class="btn btn-primary" style="width:100%;margin-top:25px;font-size:1.2rem" onclick="backToTournament()">← RETOUR</button>
 </div>
 
+<div id="statsModal" class="modal">
+<div class="modal-content">
+<h2 style="text-align:center;margin-bottom:25px;font-size:1.8rem" id="statsTitle">📊 RÉSULTATS</h2>
+<div id="statsContent"></div>
+<div id="statsButtonsView" style="display:none">
+<button class="btn btn-success" style="width:100%;margin-top:25px;font-size:1.3rem" id="statsOkViewBtn">✅ OK</button>
+</div>
+<div id="statsButtonsEdit" style="display:none">
+<button class="btn btn-success" style="width:100%;margin-top:25px;font-size:1.3rem" onclick="closeStats()">✅ OK</button>
+<button class="btn btn-danger" style="width:100%;margin-top:10px;font-size:1.3rem" onclick="cancelStats()">❌ ANNULER</button>
+</div>
+</div>
+</div>
+
+<div id="confirmModal" class="modal">
+<div class="modal-content">
+<h2 style="text-align:center;margin-bottom:25px;font-size:1.8rem">⚠️ CONFIRMATION</h2>
+<p id="confirmText" style="text-align:center;font-size:1.2rem;margin-bottom:35px;font-weight:600"></p>
+<div id="confirmButtons" class="grid-2">
+<button class="btn btn-secondary" onclick="closeConfirm()">ANNULER</button>
+<button class="btn btn-danger" id="confirmBtn">CONFIRMER</button>
+</div>
+<div id="recoveryButtons" style="display:none">
+<button class="btn btn-success" style="width:100%;margin-bottom:15px;font-size:1.2rem" onclick="handleRecovery(true)">✅ RÉCUPÉRATION</button>
+<button class="btn btn-danger" style="width:100%;font-size:1.2rem" onclick="handleRecovery(false)">❌ PERTE DE BALLE</button>
+</div>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
 const colors=[{n:'Blanc',c:'#FFFFFF'},{n:'Noir',c:'#1a1a1a'},{n:'Bleu',c:'#3b82f6'},{n:'Rouge',c:'#ef4444'},{n:'Vert',c:'#10b981'},{n:'Jaune',c:'#fbbf24'},{n:'Orange',c:'#f97316'},{n:'Violet',c:'#8b5cf6'},{n:'Rose',c:'#ec4899'},{n:'Cyan',c:'#06b6d4'}];
 
 const MATCHUPS={3:[[0,1],[0,2],[1,2]],4:[[0,1],[2,3],[0,2],[1,3],[0,3],[1,2]],5:[[0,1],[2,3],[0,4],[1,2],[3,4],[0,2],[1,3],[2,4],[0,3],[1,4]],6:[[0,1],[2,3],[4,5],[0,2],[1,3],[4,1],[5,2],[0,4],[3,5],[0,3],[1,2],[4,5]]};
 
 let state={
-  numTeams:4,duration:5,pointsPerGoal:1,
+  numTeams:4,duration:5,pointsPerGoal:1,bonusEnabled:false,bonusName:'Bonus',bonusPoints:1,
   teams:[],matches:[],currentMatchIdx:null,score1:0,score2:0,possession:1,
   matchStarted:false,timeLeft:300,timerInterval:null,timerRunning:false,
-  shots1:0,shots2:0,possessions1:0,possessions2:0,missedShots1:0,missedShots2:0
+  shots1:0,shots2:0,bonus1:0,bonus2:0,possessions1:0,possessions2:0,missedShots1:0,missedShots2:0
 };
 
 function setTeams(n){
@@ -169,7 +268,18 @@ function adjustPoints(d){
   document.getElementById('pts').textContent=state.pointsPerGoal;
 }
 
+function toggleBonus(){
+  state.bonusEnabled=document.getElementById('bonusCheck').checked;
+  document.getElementById('bonusOpt').style.display=state.bonusEnabled?'block':'none';
+}
+
+function adjustBonusPoints(d){
+  state.bonusPoints=Math.max(1,Math.min(10,state.bonusPoints+d));
+  document.getElementById('bonusPts').textContent=state.bonusPoints;
+}
+
 function goToPage2(){
+  state.bonusName=document.getElementById('bonusName').value||'Bonus';
   state.teams=colors.slice(0,state.numTeams).map((c,i)=>({id:i+1,color:c.c,name:c.n}));
   renderTeamsList();
   showPage('p2');
@@ -208,8 +318,8 @@ function generateMatches(){
   const pairs=MATCHUPS[state.numTeams];
   pairs.forEach(pair=>{
     state.matches.push({
-      t1:state.teams[pair[0]],t2:state.teams[pair[1]],s1:0,s2:0,winner:null,
-      played:false,stats:{shots1:0,shots2:0,poss1:0,poss2:0,missedShots1:0,missedShots2:0}
+      t1:state.teams[pair[0]],t2:state.teams[pair[1]],s1:null,s2:null,winner:null,
+      played:false,stats:{shots1:0,shots2:0,bonus1:0,bonus2:0,poss1:0,poss2:0,missedShots1:0,missedShots2:0}
     });
   });
 }
@@ -225,198 +335,31 @@ function updateRanking(){
     r1.goalsFor+=m.s1;r1.goalsAgainst+=m.s2;
     r2.goalsFor+=m.s2;r2.goalsAgainst+=m.s1;
     
-    if(m.s1>m.s2){r1.points+=3;r1.wins++;r2.losses++;}
-    else if(m.s2>m.s1){r2.points+=3;r2.wins++;r1.losses++;}
+    if(m.winner===1){r1.points+=3;r1.wins++;r2.losses++;}
+    else if(m.winner===2){r2.points+=3;r2.wins++;r1.losses++;}
     else{r1.points++;r2.points++;r1.draws++;r2.draws++;}
   });
   
   rankings.sort((a,b)=>{
-    if(b.points!==a.points)return b.points-a.points;
+    const pDiff=b.points-a.points;
+    if(pDiff!==0)return pDiff;
     return(b.goalsFor-b.goalsAgainst)-(a.goalsFor-a.goalsAgainst);
   });
   
-  let html='<tr><th>Pos</th><th>Équipe</th><th>Pts</th><th>V-N-D</th><th>BP:BC</th></tr>';
+  let html='<tr><th>Pos</th><th>Équipe</th><th>Pts</th><th>V-N-D</th><th>BP:BC</th><th>Diff</th></tr>';
   rankings.forEach((r,i)=>{
-    html+=`<tr><td>${i+1}</td><td>${r.team.name}</td><td>${r.points}</td><td>${r.wins}-${r.draws}-${r.losses}</td><td>${r.goalsFor}:${r.goalsAgainst}</td></tr>`;
+    const diff=r.goalsFor-r.goalsAgainst;
+    const diffColor=diff>0?'#38ef7d':(diff<0?'#ff6a00':'#fff');
+    html+=`<tr><td><strong>${i+1}</strong></td><td><div style="display:flex;align-items:center;gap:10px"><div class="color-badge" style="background:${r.team.color};width:32px;height:32px"></div><span>${r.team.name}</span></div></td><td><strong>${r.points}</strong></td><td>${r.wins}-${r.draws}-${r.losses}</td><td>${r.goalsFor}:${r.goalsAgainst}</td><td style="color:${diffColor}"><strong>${diff>0?'+':''}${diff}</strong></td></tr>`;
   });
   document.getElementById('rankingTable').innerHTML=html;
 }
 
 function updateMatches(){
+  const played=state.matches.filter(m=>m.played).length;
+  document.getElementById('matchCounter').textContent=`${played}/${state.matches.length}`;
+  
   let html='';
   state.matches.forEach((m,i)=>{
-    const status=m.played?`${m.s1}-${m.s2}`:'À jouer';
-    html+=`<div class="card" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div>${m.t1.name} vs ${m.t2.name}</div><div style="font-weight:bold">${status}</div>`;
-    if(!m.played){
-      html+=`<button class="btn btn-primary" style="padding:8px 16px;font-size:.9rem" onclick="playMatch(${i})">JOUER</button>`;
-    }
-    html+='</div>';
-  });
-  document.getElementById('matchesList').innerHTML=html;
-}
-
-function playMatch(idx){
-  state.currentMatchIdx=idx;
-  const m=state.matches[idx];
-  state.score1=0;state.score2=0;state.possession=1;state.matchStarted=false;
-  state.timeLeft=state.duration*60;state.timerRunning=false;
-  state.shots1=0;state.shots2=0;state.possessions1=0;state.possessions2:0;state.missedShots1=0;state.missedShots2=0;
-  
-  document.getElementById('teamName1').textContent=m.t1.name;
-  document.getElementById('teamName2').textContent=m.t2.name;
-  
-  const txtColor1=m.t1.color==='#FFFFFF'||m.t1.color==='#fbbf24'?'#000':'#fff';
-  const txtColor2=m.t2.color==='#FFFFFF'||m.t2.color==='#fbbf24'?'#000':'#fff';
-  document.getElementById('startButtons').innerHTML=`<button class="btn" style="background:${m.t1.color};color:${txtColor1};width:100%;padding:30px;font-size:1.3rem;font-weight:800" onclick="selectStarter(1)">${m.t1.name}</button><button class="btn" style="background:${m.t2.color};color:${txtColor2};width:100%;padding:30px;font-size:1.3rem;font-weight:800" onclick="selectStarter(2)">${m.t2.name}</button>`;
-  
-  document.getElementById('startPhase').style.display='block';
-  document.getElementById('gamePhase').style.display='none';
-  document.getElementById('launchBtn').style.display='none';
-  
-  updateTimer();
-  updateScores();
-  showPage('p4');
-}
-
-function selectStarter(team){
-  state.possession=team;
-  const btns=document.querySelectorAll('#startButtons .btn');
-  btns.forEach((btn,i)=>{
-    btn.style.opacity=i+1===team?'1':'.5';
-  });
-  document.getElementById('launchBtn').style.display='block';
-}
-
-function launchMatch(){
-  state.matchStarted=true;
-  state.possessions1=state.possession===1?1:0;
-  state.possessions2=state.possession===2?1:0;
-  
-  document.getElementById('startPhase').style.display='none';
-  document.getElementById('gamePhase').style.display='block';
-  
-  updateScores();
-  updatePossession();
-  startTimer();
-}
-
-function updateScores(){
-  document.getElementById('score1').textContent=state.score1;
-  document.getElementById('score2').textContent=state.score2;
-}
-
-function updatePossession(){
-  const m=state.matches[state.currentMatchIdx];
-  const zone=document.getElementById('possessionZone');
-  const teamName=document.getElementById('possessionTeam');
-  
-  if(state.possession===1){
-    zone.style.background=m.t1.color;
-    teamName.textContent=m.t1.name;
-  }else{
-    zone.style.background=m.t2.color;
-    teamName.textContent=m.t2.name;
-  }
-}
-
-function scoreGoal(){
-  if(!state.matchStarted)return;
-  if(state.possession===1){
-    state.score1+=state.pointsPerGoal;
-    state.shots1++;
-  }else{
-    state.score2+=state.pointsPerGoal;
-    state.shots2++;
-  }
-  state.possession=state.possession===1?2:1;
-  if(state.possession===1)state.possessions1++;
-  else state.possessions2++;
-  updateScores();
-  updatePossession();
-}
-
-function missedShot(){
-  if(!state.matchStarted)return;
-  if(state.possession===1){
-    state.missedShots1++;
-  }else{
-    state.missedShots2++;
-  }
-  state.possession=state.possession===1?2:1;
-  if(state.possession===1)state.possessions1++;
-  else state.possessions2++;
-  updatePossession();
-}
-
-function turnover(){
-  if(!state.matchStarted)return;
-  state.possession=state.possession===1?2:1;
-  if(state.possession===1)state.possessions1++;
-  else state.possessions2++;
-  updatePossession();
-}
-
-function updateTimer(){
-  const mins=Math.floor(state.timeLeft/60);
-  const secs=state.timeLeft%60;
-  document.getElementById('timer').textContent=`${mins}:${secs<10?'0':''}${secs}`;
-}
-
-function startTimer(){
-  if(state.timerRunning)return;
-  state.timerRunning=true;
-  state.timerInterval=setInterval(()=>{
-    state.timeLeft--;
-    updateTimer();
-    if(state.timeLeft<=0){
-      stopTimer();
-      endMatch();
-    }
-  },1000);
-}
-
-function stopTimer(){
-  if(!state.timerRunning)return;
-  state.timerRunning=false;
-  clearInterval(state.timerInterval);
-}
-
-function endMatch(){
-  stopTimer();
-  const m=state.matches[state.currentMatchIdx];
-  m.s1=state.score1;
-  m.s2=state.score2;
-  m.winner=state.score1>state.score2?1:(state.score2>state.score1?2:0);
-  m.played=true;
-  m.stats={shots1:state.shots1,shots2:state.shots2,poss1:state.possessions1,poss2:state.possessions2,missedShots1:state.missedShots1,missedShots2:state.missedShots2};
-  
-  backToTournament();
-}
-
-function backToTournament(){
-  stopTimer();
-  updateRanking();
-  updateMatches();
-  showPage('p3');
-}
-
-function resetTournament(){
-  state={
-    numTeams:4,duration:5,pointsPerGoal:1,
-    teams:[],matches:[],currentMatchIdx:null,score1:0,score2:0,possession:1,
-    matchStarted:false,timeLeft:300,timerInterval:null,timerRunning:false,
-    shots1:0,shots2:0,possessions1:0,possessions2:0,missedShots1:0,missedShots2:0
-  };
-  document.getElementById('dur').textContent='5';
-  document.getElementById('pts').textContent='1';
-  setTeams(4);
-  showPage('p1');
-}
-
-function showPage(pageId){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(pageId).classList.add('active');
-}
-</script>
-</body>
-</html>
+    const isCurrent=i===state.currentMatchIdx&&!m.played;
+    html+=`<div class="match-item ${isCurrent?'playing':''}"><span style="font-weight:bold;color:rgba(255,255,255,.6);min

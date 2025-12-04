@@ -1,4 +1,11 @@
-<!DOCTYPE html>
+function validStatsEdit(){
+  closeStats();
+}
+
+function goBackPage3(){
+  document.getElementById('statsModal').classList.remove('active');
+  showPage('p3');
+}<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -183,6 +190,9 @@ input[type="number"]::placeholder{color:rgba(255,255,255,.6)}
 </div>
 <div class="score" id="score1">0</div>
 </div>
+<div style="display:flex;align-items:center;justify-content:center">
+<button id="btnUndo" style="background:none;border:none;color:#fff;font-size:2.5rem;cursor:pointer;padding:10px;filter:drop-shadow(0 2px 4px rgba(0,0,0,.3))" title="Annuler la dernière action">⏮️</button>
+</div>
 <div class="score-item" style="text-align:center">
 <div style="display:flex;align-items:center;gap:8px;justify-content:center;font-size:1rem;font-weight:700">
 <div class="color-badge" id="badge2" style="width:36px;height:36px"></div>
@@ -214,7 +224,7 @@ input[type="number"]::placeholder{color:rgba(255,255,255,.6)}
 </div>
 <div id="statsButtonsEdit" style="display:none">
 <button class="btn btn-success" style="width:100%;margin-top:25px;font-size:1.3rem" onclick="closeStats()">✅ OK</button>
-<button class="btn btn-danger" style="width:100%;margin-top:10px;font-size:1.3rem" onclick="cancelStatsEdit()">❌ ANNULER</button>
+<button class="btn btn-danger" style="width:100%;margin-top:10px;font-size:1.3rem" onclick="closeConfirm();document.getElementById('statsModal').classList.remove('active')">❌ ANNULER</button>
 </div>
 </div>
 </div>
@@ -244,7 +254,8 @@ let state={
   numTeams:4,duration:5,pointsPerGoal:1,bonusEnabled:false,bonusName:'Bonus',bonusPoints:1,
   teams:[],matches:[],currentMatchIdx:null,score1:0,score2:0,possession:1,
   matchStarted:false,timeLeft:300,timerInterval:null,timerRunning:false,
-  shots1:0,shots2:0,bonus1:0,bonus2:0,possessions1:0,possessions2:0,missedShots1:0,missedShots2:0
+  shots1:0,shots2:0,bonus1:0,bonus2:0,possessions1:0,possessions2:0,missedShots1:0,missedShots2:0,
+  lastPage:'p1',actionsHistory:[]
 };
 
 function setTeams(n){
@@ -381,7 +392,7 @@ function playMatch(idx){
   const m=state.matches[idx];
   state.score1=0;state.score2=0;state.possession=1;state.matchStarted=false;
   state.timeLeft=state.duration*60;state.timerRunning=false;
-  state.shots1=0;state.shots2=0;state.bonus1=0;state.bonus2=0;state.possessions1=0;state.possessions2=0;state.missedShots1=0;state.missedShots2=0;
+  state.shots1=0;state.shots2=0;state.bonus1=0;state.bonus2=0;state.possessions1=0;state.possessions2=0;state.missedShots1=0;state.missedShots2=0;state.actionsHistory=[];
   if(state.timerInterval)clearInterval(state.timerInterval);
   
   document.getElementById('teamName1').textContent=m.t1.name;
@@ -453,10 +464,16 @@ function launchMatch(){
   state.matchStarted=true;
   state.possessions1=state.possession===1?1:0;
   state.possessions2=state.possession===2?1:0;
+  state.actionsHistory=[];
   
   document.getElementById('startPhase').style.display='none';
   document.getElementById('statsEditBtn').parentElement.style.display='none';
   document.getElementById('gamePhase').style.display='block';
+  
+  const btn=document.getElementById('btnUndo');
+  if(btn){
+    btn.onclick=()=>undoLastAction();
+  }
   
   updateScores();
   updatePossession();
@@ -650,34 +667,31 @@ function showEditForm(){
 }
 
 function closeStats(){
-  const m=state.matches[state.currentMatchIdx];
-  const shots1=parseInt(document.getElementById('edit_shots1').value)||0;
-  const shots2=parseInt(document.getElementById('edit_shots2').value)||0;
-  const missed1=parseInt(document.getElementById('edit_missed1').value)||0;
-  const missed2=parseInt(document.getElementById('edit_missed2').value)||0;
-  const poss1=parseInt(document.getElementById('edit_poss1').value)||1;
-  const poss2=parseInt(document.getElementById('edit_poss2').value)||1;
-  
-  m.s1=shots1;
-  m.s2=shots2;
-  m.winner=m.s1>m.s2?1:(m.s2>m.s1?2:0);
-  m.played=true;
-  m.stats={
-    shots1:shots1,
-    shots2:shots2,
-    bonus1:0,
-    bonus2:0,
-    poss1:poss1,
-    poss2:poss2,
-    missedShots1:missed1,
-    missedShots2:missed2
-  };
-  
-  document.getElementById('statsModal').classList.remove('active');
-  state.currentMatchIdx=null;
-  updateRanking();
-  updateMatches();
-  showPage('p3');
+  try{
+    const m=state.matches[state.currentMatchIdx];
+    if(!m)return;
+    
+    const shots1=parseInt(document.getElementById('edit_shots1')?.value)||0;
+    const shots2=parseInt(document.getElementById('edit_shots2')?.value)||0;
+    const missed1=parseInt(document.getElementById('edit_missed1')?.value)||0;
+    const missed2=parseInt(document.getElementById('edit_missed2')?.value)||0;
+    const poss1=parseInt(document.getElementById('edit_poss1')?.value)||1;
+    const poss2=parseInt(document.getElementById('edit_poss2')?.value)||1;
+    
+    m.s1=shots1;
+    m.s2=shots2;
+    m.winner=m.s1>m.s2?1:(m.s2>m.s1?2:0);
+    m.played=true;
+    m.stats={shots1:shots1,shots2:shots2,bonus1:0,bonus2:0,poss1:poss1,poss2:poss2,missedShots1:missed1,missedShots2:missed2};
+    
+    document.getElementById('statsModal').classList.remove('active');
+    state.currentMatchIdx=null;
+    updateRanking();
+    updateMatches();
+    showPage('p3');
+  }catch(e){
+    console.error('Erreur closeStats:',e);
+  }
 }
 
 function cancelStats(){

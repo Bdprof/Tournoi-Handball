@@ -809,7 +809,7 @@ function exportPDF(){
   y+=10;doc.setFontSize(14);doc.setFont(undefined,'bold');doc.text('RÉSULTATS',20,y);y+=8;doc.setFontSize(9);doc.setFont(undefined,'normal');
   
   state.matches.forEach((m,i)=>{
-    if(y>270){doc.addPage();y=20;}
+    if(y>260){doc.addPage();y=20;}
     const result=m.played?`${m.s1}-${m.s2}${m.winner===0?' (nul)':''}`:' À jouer';
     const shots1=m.stats.shots1||0;
     const shots2=m.stats.shots2||0;
@@ -824,15 +824,20 @@ function exportPDF(){
     const accuracy1=m.played&&total1>0?(shots1/total1*100).toFixed(1):'0.0';
     const accuracy2=m.played&&total2>0?(shots2/total2*100).toFixed(1):'0.0';
     
-    doc.text(`${i+1}. ${m.t1.name} - ${m.t2.name}`,20,y);
-    doc.text(result,150,y);
-    y+=6;
+    doc.setFont(undefined,'bold');
+    doc.text(`${i+1}. ${m.t1.name} vs ${m.t2.name}: ${result}`,20,y);
+    y+=5;
+    
     if(m.played){
+      doc.setFont(undefined,'normal');
       doc.setFontSize(8);
-      doc.text(`Tirs: ${total1} (${accuracy1}%) | Possess: ${poss1} (${shotsPerPoss1}%)`,22,y);
-      doc.text(`Tirs: ${total2} (${accuracy2}%) | Possess: ${poss2} (${shotsPerPoss2}%)`,22,y+4);
+      doc.text(`${m.t1.name}: Buts=${shots1} | Tirs ratés=${missed1} | Tirs total=${total1} (${accuracy1}%) | Possessions=${poss1} (${shotsPerPoss1}%)`,22,y);
+      y+=4;
+      doc.text(`${m.t2.name}: Buts=${shots2} | Tirs ratés=${missed2} | Tirs total=${total2} (${accuracy2}%) | Possessions=${poss2} (${shotsPerPoss2}%)`,22,y);
+      y+=5;
       doc.setFontSize(9);
-      y+=8;
+    }else{
+      y+=3;
     }
   });
   

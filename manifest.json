@@ -1,0 +1,25 @@
+{
+  "name": "Tournoi Handball",
+  "short_name": "Handball",
+  "description": "Application de gestion de tournoi handball",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#1e3a8a",
+  "theme_color": "#3b82f6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://raw.githubusercontent.com/Bdprof/Tournoi-Handball/refs/heads/main/Logo%20apps%20tournoi%20Handball%202.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://raw.githubusercontent.com/Bdprof/Tournoi-Handball/refs/heads/main/Logo%20apps%20tournoi%20Handball%202.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

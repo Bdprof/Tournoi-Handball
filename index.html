@@ -812,19 +812,6 @@ function backToTournament(){
   updateMatches();
 }
 
-function showConfirm(text,callback,isRecovery){
-  document.getElementById('confirmText').textContent=text;
-  if(isRecovery){
-    document.getElementById('confirmButtons').style.display='none';
-    document.getElementById('recoveryButtons').style.display='block';
-  }else{
-    document.getElementById('confirmButtons').style.display='grid';
-    document.getElementById('recoveryButtons').style.display='none';
-    document.getElementById('confirmBtn').onclick=()=>{closeConfirm();callback();};
-  }
-  document.getElementById('confirmModal').classList.add('active');
-}
-
 function turnover(){
   if(!state.matchStarted)return;
   state.actionsHistory.push({type:'turnover',team:state.possession});

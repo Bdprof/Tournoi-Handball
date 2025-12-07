@@ -139,7 +139,10 @@ input[type="number"]::placeholder{color:rgba(255,255,255,.6)}
 <h2>Couleurs des équipes</h2>
 <div id="teamsList"></div>
 </div>
-<button class="btn btn-success" style="width:100%;margin-top:25px;font-size:1.3rem" onclick="startTournament()">DÉMARRER 🚀</button>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:25px">
+<button class="btn btn-primary" style="font-size:1.1rem" onclick="exportPDF()">📄 PDF</button>
+<button class="btn btn-success" style="font-size:1.1rem" onclick="startTournament()">DÉMARRER 🚀</button>
+</div>
 </div>
 
 <div id="p3" class="page">
@@ -163,6 +166,7 @@ input[type="number"]::placeholder{color:rgba(255,255,255,.6)}
 <button class="back-btn" onclick="backToTournament()">←</button>
 <div class="timer" id="timer">5:00</div>
 <button class="play-pause-btn" id="playPauseBtn" onclick="toggleTimer()">▶</button>
+<button class="btn btn-primary" style="padding:10px 15px;font-size:0.9rem;margin-left:10px" onclick="exportPDF()">📄</button>
 </div>
 <div id="startPhase" class="card">
 <h2 style="text-align:center">QUI ENGAGE ?</h2>
@@ -241,38 +245,15 @@ input[type="number"]::placeholder{color:rgba(255,255,255,.6)}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
+// Nettoyage complet des anciens Service Workers
 if('serviceWorker' in navigator){
-  const CACHE_VERSION='v'+(new Date()).getTime();
-  navigator.serviceWorker.register(new URL('data:application/javascript,\
-const CACHE_NAME="tournoi-handball-'+CACHE_VERSION+'";\
-const OLD_CACHE="tournoi-handball-v"+((new Date()).getTime()-1000);\
-const urlsToCache=["./"];\
-self.addEventListener("install",event=>{\
-  event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(urlsToCache)).then(()=>self.skipWaiting()));\
-});\
-self.addEventListener("activate",event=>{\
-  event.waitUntil(\
-    caches.keys().then(cacheNames=>{\
-      return Promise.all(cacheNames.map(cacheName=>{\
-        if(cacheName.startsWith("tournoi-handball")&&cacheName!==CACHE_NAME){\
-          return caches.delete(cacheName);\
-        }\
-      }));\
-    }).then(()=>self.clients.claim())\
-  );\
-});\
-self.addEventListener("fetch",event=>{\
-  if(event.request.method!=="GET")return;\
-  event.respondWith(\
-    fetch(event.request).then(response=>{\
-      if(!response||response.status!==200||response.type!=="basic")return response;\
-      const responseToCache=response.clone();\
-      caches.open(CACHE_NAME).then(cache=>cache.put(event.request,responseToCache));\
-      return response;\
-    }).catch(()=>caches.match(event.request))\
-  );\
-});\
-',{type:"application/javascript"})).catch(err=>console.log("SW error:",err));\
+  navigator.serviceWorker.getRegistrations().then(regs=>{
+    regs.forEach(reg=>reg.unregister());
+  });
+  // Nettoyage du cache
+  if('caches' in window){
+    caches.keys().then(names=>names.forEach(n=>caches.delete(n)));
+  }
 }
 </script>
 <script>

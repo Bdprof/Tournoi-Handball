@@ -139,10 +139,7 @@ input[type="number"]::placeholder{color:rgba(255,255,255,.6)}
 <h2>Couleurs des équipes</h2>
 <div id="teamsList"></div>
 </div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin-top:25px">
-<button class="btn btn-primary" style="font-size:1.1rem" onclick="exportPDF()">📄 PDF</button>
-<button class="btn btn-success" style="font-size:1.1rem" onclick="startTournament()">DÉMARRER 🚀</button>
-</div>
+<button class="btn btn-success" style="width:100%;margin-top:25px;font-size:1.3rem" onclick="startTournament()">DÉMARRER 🚀</button>
 </div>
 
 <div id="p3" class="page">
@@ -166,7 +163,6 @@ input[type="number"]::placeholder{color:rgba(255,255,255,.6)}
 <button class="back-btn" onclick="backToTournament()">←</button>
 <div class="timer" id="timer">5:00</div>
 <button class="play-pause-btn" id="playPauseBtn" onclick="toggleTimer()">▶</button>
-<button class="btn btn-primary" style="padding:10px 15px;font-size:0.9rem;margin-left:10px" onclick="exportPDF()">📄</button>
 </div>
 <div id="startPhase" class="card">
 <h2 style="text-align:center">QUI ENGAGE ?</h2>
@@ -791,6 +787,28 @@ function closeStats(){
   }catch(e){
     console.error('Erreur closeStats:',e);
   }
+}
+
+function validStatsEdit(){
+  closeStats();
+}
+
+function goBackPage3(){
+  document.getElementById('statsModal').classList.remove('active');
+  showPage('p3');
+}
+
+function showConfirm(text,callback,isRecovery){
+  document.getElementById('confirmText').textContent=text;
+  if(isRecovery){
+    document.getElementById('confirmButtons').style.display='none';
+    document.getElementById('recoveryButtons').style.display='block';
+  }else{
+    document.getElementById('confirmButtons').style.display='grid';
+    document.getElementById('recoveryButtons').style.display='none';
+    document.getElementById('confirmBtn').onclick=()=>{closeConfirm();callback();};
+  }
+  document.getElementById('confirmModal').classList.add('active');
 }
 
 function cancelStats(){

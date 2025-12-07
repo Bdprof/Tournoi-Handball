@@ -372,7 +372,8 @@ function updateRanking(){
 
 function updateMatches(){
   const played=state.matches.filter(m=>m.played).length;
-  document.getElementById('matchCounter').textContent=`${played}/${state.matches.length}`;
+  const total=state.matches.length;
+  document.getElementById('matchCounter').textContent=`${played}/${total}`;
   
   let html='';
   state.matches.forEach((m,i)=>{
@@ -521,7 +522,7 @@ function updatePossession(){
 }
 
 function scoreGoal(){
-  if(!state.matchStarted)return;
+  if(!state.matchStarted||state.timerRunning===false)return;
   state.actionsHistory.push({type:'goal',team:state.possession});
   if(state.possession===1){
     state.score1+=state.pointsPerGoal;
@@ -539,7 +540,7 @@ function scoreGoal(){
 }
 
 function scoreBonus(){
-  if(!state.matchStarted)return;
+  if(!state.matchStarted||state.timerRunning===false)return;
   state.actionsHistory.push({type:'bonus',team:state.possession});
   if(state.possession===1){
     state.score1+=state.bonusPoints;
@@ -552,7 +553,7 @@ function scoreBonus(){
 }
 
 function missedShot(){
-  if(!state.matchStarted)return;
+  if(!state.matchStarted||state.timerRunning===false)return;
   if(state.possession===1){
     state.missedShots1++;
   }else{
@@ -831,7 +832,7 @@ function backToTournament(){
 }
 
 function turnover(){
-  if(!state.matchStarted)return;
+  if(!state.matchStarted||state.timerRunning===false)return;
   state.actionsHistory.push({type:'turnover',team:state.possession});
   state.possession=state.possession===1?2:1;
   if(state.possession===1)state.possessions1++;

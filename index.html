@@ -302,80 +302,6 @@ function goToPage2(){
 
 function renderTeamsList(){
   let html='';
-  state.teams.forEach((t,i)=>{
-    html+=`<div class="team-selector"><span style="font-weight:bold;font-size:1.3rem;width:40px">${t.id}</span><div class="color-badge" style="background:${t.color}"></div><select onchange="changeTeamColor(${i},this.value)">`;
-    colors.forEach(c=>{
-      html+=`<option value="${c.c}"${c.c===t.color?' selected':''}>${c.n}</option>`;
-    });
-    html+='</select></div>';
-  });
-  document.getElementById('teamsList').innerHTML=html;
-}
-
-function changeTeamColor(idx,color){
-  const found=colors.find(c=>c.c===color);
-  if(found){
-    state.teams[idx].color=found.c;
-    state.teams[idx].name=found.n;
-    renderTeamsList();
-  }
-}
-
-function startTournament(){
-  generateMatches();
-  showPage('p3');
-  updateRanking();
-  updateMatches();
-}
-
-function generateMatches(){
-  state.matches=[];
-  const pairs=MATCHUPS[state.numTeams];
-  pairs.forEach(pair=>{
-    state.matches.push({
-      t1:state.teams[pair[0]],t2:state.teams[pair[1]],s1:null,s2:null,winner:null,
-      played:false,stats:{shots1:0,shots2:0,bonus1:0,bonus2:0,poss1:0,poss2:0}
-    });
-  });
-}
-
-function updateRanking(){
-  const rankings=state.teams.map(t=>({team:t,points:0,wins:0,draws:0,losses:0,goalsFor:0,goalsAgainst:0}));
-  
-  state.matches.forEach(m=>{
-    if(!m.played)return;
-    const r1=rankings.find(r=>r.team.id===m.t1.id);
-    const r2=rankings.find(r=>r.team.id===m.t2.id);
-    
-    r1.goalsFor+=m.s1;r1.goalsAgainst+=m.s2;
-    r2.goalsFor+=m.s2;r2.goalsAgainst+=m.s1;
-    
-    if(m.winner===1){r1.points+=3;r1.wins++;r2.losses++;}
-    else if(m.winner===2){r2.points+=3;r2.wins++;r1.losses++;}
-    else{r1.points++;r2.points++;r1.draws++;r2.draws++;}
-  });
-  
-  rankings.sort((a,b)=>{
-    const pDiff=b.points-a.points;
-    if(pDiff!==0)return pDiff;
-    return(b.goalsFor-b.goalsAgainst)-(a.goalsFor-a.goalsAgainst);
-  });
-  
-  let html='<tr><th>Pos</th><th>Équipe</th><th>Pts</th><th>V-N-D</th><th>BP:BC</th><th>Diff</th></tr>';
-  rankings.forEach((r,i)=>{
-    const diff=r.goalsFor-r.goalsAgainst;
-    const diffColor=diff>0?'#38ef7d':(diff<0?'#ff6a00':'#fff');
-    html+=`<tr><td><strong>${i+1}</strong></td><td><div style="display:flex;align-items:center;gap:10px"><div class="color-badge" style="background:${r.team.color};width:32px;height:32px"></div><span>${r.team.name}</span></div></td><td><strong>${r.points}</strong></td><td>${r.wins}-${r.draws}-${r.losses}</td><td>${r.goalsFor}:${r.goalsAgainst}</td><td style="color:${diffColor}"><strong>${diff>0?'+':''}${diff}</strong></td></tr>`;
-  });
-  document.getElementById('rankingTable').innerHTML=html;
-}
-
-function updateMatches(){
-  const played=state.matches.filter(m=>m.played).length;
-  const total=state.matches.length;
-  document.getElementById('matchCounter').textContent=`${played}/${total}`;
-  
-  let html='';
   state.matches.forEach((m,i)=>{
     const isCurrent=i===state.currentMatchIdx&&!m.played;
     html+=`<div class="match-item ${isCurrent?'playing':''}"><span style="font-weight:bold;color:rgba(255,255,255,.6);min-width:20px;font-size:.85rem">${i+1}</span><div style="flex:1;display:flex;align-items:center;gap:8px;font-size:.9rem;font-weight:600">`;
@@ -869,210 +795,6 @@ function exportPDF(){
   const jsPDF=window.jspdf.jsPDF;
   const doc=new jsPDF();
   
-  // Header
-  doc.setFillColor(30,58,138);
-  doc.rect(0,0,210,35,'F');
-  doc.setTextColor(255,255,255);
-  doc.setFontSize(26);
-  doc.setFont(undefined,'bold');
-  doc.text('🤾 TOURNOI HANDBALL',105,20,{align:'center'});
-  
-  // Info tournament
-  doc.setTextColor(0,0,0);
-  doc.setFontSize(9);
-  doc.setFont(undefined,'normal');
-  let y=42;
-  doc.text(`Date: ${new Date().toLocaleDateString('fr-FR')}`,20,y);
-  doc.text(`Durée/Match: ${state.duration} min | Points/But: ${state.pointsPerGoal}`,20,y+5);
-  if(state.bonusEnabled)doc.text(`${state.bonusName}: ${state.bonusPoints} pts`,20,y+10);
-  
-  // Classement
-  y+=18;
-  doc.setFontSize(14);
-  doc.setFont(undefined,'bold');
-  doc.text('CLASSEMENT FINAL',20,y);
-  y+=8;
-  
-  const rankings=state.teams.map(t=>({team:t,points:0,wins:0,draws:0,losses:0,goalsFor:0,goalsAgainst:0}));
-  state.matches.forEach(m=>{
-    if(!m.played)return;
-    const r1=rankings.find(r=>r.team.id===m.t1.id);
-    const r2=rankings.find(r=>r.team.id===m.t2.id);
-    r1.goalsFor+=m.s1;r1.goalsAgainst+=m.s2;
-    r2.goalsFor+=m.s2;r2.goalsAgainst+=m.s1;
-    if(m.winner===1){r1.points+=3;r1.wins++;r2.losses++;}
-    else if(m.winner===2){r2.points+=3;r2.wins++;r1.losses++;}
-    else{r1.points++;r2.points++;r1.draws++;r2.draws++;}
-  });
-  rankings.sort((a,b)=>{
-    if(b.points!==a.points)return b.points-a.points;
-    return(b.goalsFor-b.goalsAgainst)-(a.goalsFor-a.goalsAgainst);
-  });
-  
-  doc.setFontSize(9);
-  doc.setFont(undefined,'bold');
-  rankings.forEach((r,i)=>{
-    const isWhite=r.team.color==='#FFFFFF'||r.team.color==='#fbbf24';
-    
-    // Cadre noir pour équipe blanche, fond couleur sinon
-    if(isWhite){
-      doc.setDrawColor(0);
-      doc.setLineWidth(0.5);
-      doc.rect(20,y-4,70,6);
-      doc.setTextColor(0,0,0);
-    }else{
-      doc.setFillColor(parseInt(r.team.color.slice(1,3),16),parseInt(r.team.color.slice(3,5),16),parseInt(r.team.color.slice(5,7),16));
-      doc.rect(20,y-4,70,6,'F');
-      doc.setTextColor(255,255,255);
-    }
-    
-    doc.text(`${i+1}. ${r.team.name}`,22,y);
-    doc.setTextColor(0,0,0);
-    doc.text(`${r.points}pts`,95,y);
-    doc.text(`${r.wins}V`,110,y);
-    doc.text(`${r.draws}N`,120,y);
-    doc.text(`${r.losses}D`,130,y);
-    doc.text(`${r.goalsFor}:${r.goalsAgainst}`,145,y);
-    y+=7;
-  });
-  
-  // Statistiques par équipe
-  y+=5;
-  doc.setFontSize(12);
-  doc.setFont(undefined,'bold');
-  doc.text('STATISTIQUES PAR ÉQUIPE',20,y);
-  y+=8;
-  
-  rankings.forEach(r=>{
-    if(y>240){doc.addPage();y=20;}
-    
-    const teamMatches=state.matches.filter(m=>(m.t1.id===r.team.id||m.t2.id===r.team.id)&&m.played);
-    const shots=teamMatches.reduce((sum,m)=>sum+(m.t1.id===r.team.id?m.stats.shots1:m.stats.shots2),0);
-    const missed=teamMatches.reduce((sum,m)=>sum+(m.t1.id===r.team.id?m.stats.missedShots1:m.stats.missedShots2),0);
-    const poss=teamMatches.reduce((sum,m)=>sum+(m.t1.id===r.team.id?m.stats.poss1:m.stats.poss2),0);
-    const bonus=teamMatches.reduce((sum,m)=>sum+(m.t1.id===r.team.id?m.stats.bonus1:m.stats.bonus2),0);
-    const totalShots=shots+missed;
-    
-    const accuracy=totalShots>0?Math.round(shots/totalShots*100):0;
-    const shotsPerPoss=poss>0?Math.round(totalShots/poss*100):0;
-    
-    const isWhite=r.team.color==='#FFFFFF'||r.team.color==='#fbbf24';
-    if(isWhite){
-      doc.setDrawColor(0);
-      doc.setLineWidth(0.5);
-      doc.rect(20,y-2.5,40,5);
-      doc.setTextColor(0,0,0);
-    }else{
-      doc.setFillColor(parseInt(r.team.color.slice(1,3),16),parseInt(r.team.color.slice(3,5),16),parseInt(r.team.color.slice(5,7),16));
-      doc.rect(20,y-2.5,40,5,'F');
-      doc.setTextColor(255,255,255);
-    }
-    
-    doc.setFontSize(9);
-    doc.setFont(undefined,'bold');
-    doc.text(r.team.name,22,y);
-    doc.setTextColor(0,0,0);
-    doc.setFont(undefined,'normal');
-    doc.setFontSize(7);
-    y+=4;
-    doc.text(`Précision: ${accuracy}% | Tirs/Possession: ${shotsPerPoss}%`,22,y);
-    y+=3;
-  });
-  
-  // Résultats des matchs
-  y+=2;
-  if(y>250)doc.addPage(),y=20;
-  
-  doc.setFontSize(11);
-  doc.setFont(undefined,'bold');
-  doc.text('RÉSULTATS DES MATCHS',20,y);
-  y+=6;
-  
-  state.matches.forEach((m,i)=>{
-    if(y>270){doc.addPage();y=20;}
-    
-    doc.setFontSize(8);
-    doc.setFont(undefined,'bold');
-    
-    const isWhite1=m.t1.color==='#FFFFFF'||m.t1.color==='#fbbf24';
-    const isWhite2=m.t2.color==='#FFFFFF'||m.t2.color==='#fbbf24';
-    
-    doc.text(`Match ${i+1}:`,20,y);
-    
-    if(isWhite1){
-      doc.setDrawColor(0);
-      doc.setLineWidth(0.4);
-      doc.rect(35,y-2.5,40,4);
-      doc.setTextColor(0,0,0);
-    }else{
-      doc.setFillColor(parseInt(m.t1.color.slice(1,3),16),parseInt(m.t1.color.slice(3,5),16),parseInt(m.t1.color.slice(5,7),16));
-      doc.rect(35,y-2.5,40,4,'F');
-      doc.setTextColor(255,255,255);
-    }
-    doc.text(m.t1.name,37,y);
-    
-    if(isWhite2){
-      doc.setDrawColor(0);
-      doc.setLineWidth(0.4);
-      doc.rect(125,y-2.5,40,4);
-      doc.setTextColor(0,0,0);
-    }else{
-      doc.setFillColor(parseInt(m.t2.color.slice(1,3),16),parseInt(m.t2.color.slice(3,5),16),parseInt(m.t2.color.slice(5,7),16));
-      doc.rect(125,y-2.5,40,4,'F');
-      doc.setTextColor(255,255,255);
-    }
-    doc.text(m.t2.name,127,y);
-    
-    doc.setTextColor(0,0,0);
-    doc.setFontSize(10);
-    doc.text(m.s1.toString(),115,y,{align:'center'});
-    doc.text(m.s2.toString(),120,y,{align:'center'});
-    
-    y+=4;
-    
-    if(m.played){
-      doc.setTextColor(0,0,0);
-      doc.setFontSize(7);
-      doc.setFont(undefined,'normal');
-      const shots1=m.stats.shots1||0;
-      const shots2=m.stats.shots2||0;
-      const missed1=m.stats.missedShots1||0;
-      const missed2=m.stats.missedShots2||0;
-      const total1=shots1+missed1;
-      const total2=shots2+missed2;
-      const poss1=m.stats.poss1||1;
-      const poss2=m.stats.poss2||1;
-      const accuracy1=total1>0?Math.round(shots1/total1*100):0;
-      const accuracy2=total2>0?Math.round(shots2/total2*100):0;
-      
-      doc.text(`${shots1}B/${total1}T (${accuracy1}%) | ${poss1}poss`,37,y);
-      doc.text(`${shots2}B/${total2}T (${accuracy2}%) | ${poss2}poss`,127,y);
-      y+=3;
-    }
-  });
-  
-  // Footer
-  const pageCount=doc.internal.getNumberOfPages();
-  for(let i=1;i<=pageCount;i++){
-    doc.setPage(i);
-    doc.setFontSize(8);
-    doc.setTextColor(128,128,128);
-    doc.text(`Généré le ${new Date().toLocaleString('fr-FR')}`,105,290,{align:'center'});
-  }
-  
-  doc.save(`tournoi-handball-${Date.now()}.pdf`);
-}
-
-function showPage(pageId){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(pageId).classList.add('active');
-  state.lastPage=pageId;
-}
-
-function exportPDF(){
-  const jsPDF=window.jspdf.jsPDF;
-  const doc=new jsPDF();
-  
   doc.setTextColor(30,58,138);
   doc.setFontSize(16);
   doc.setFont(undefined,'bold');
@@ -1084,7 +806,7 @@ function exportPDF(){
   doc.setFont(undefined,'normal');
   doc.text(`Date: ${new Date().toLocaleDateString('fr-FR')} | Matchs: ${played}/${state.matches.length} | Durée: ${state.duration} min | Points/but: ${state.pointsPerGoal}`,105,16,{align:'center'});
   
-  let y=22;
+  let y=24;
   
   const rankings=state.teams.map(t=>({team:t,points:0,wins:0,draws:0,losses:0,goalsFor:0,goalsAgainst:0}));
   state.matches.forEach(m=>{
@@ -1117,147 +839,79 @@ function exportPDF(){
   doc.setFont(undefined,'bold');
   doc.setTextColor(0,0,0);
   doc.text('Pos',10,y);
-  doc.text('Équipe',18,y);
-  doc.text('Pts',58,y);
-  doc.text('V',67,y);
-  doc.text('N',74,y);
-  doc.text('D',82,y);
-  doc.text('BP',89,y);
-  doc.text('BC',99,y);
-  doc.text('Diff',109,y);
-  doc.text('Eff%',130,y);
-  y+=2.5;
-  doc.setDrawColor(150);
-  doc.setLineWidth(0.2);
-  doc.line(10,y,190,y);
-  y+=2;
+  doc.text('Équipe',20,y);
   
-  doc.setFont(undefined,'normal');
-  doc.setFontSize(6);
-  rankings.forEach((r,i)=>{
-    const diff=r.goalsFor-r.goalsAgainst;
-    const isWhite=r.team.color==='#FFFFFF'||r.team.color==='#fbbf24';
-    const eff=teamStats[r.team.id];
+  state.teams.forEach((t,i)=>{
+    html+=`<div class="team-selector"><span style="font-weight:bold;font-size:1.3rem;width:40px">${t.id}</span><div class="color-badge" style="background:${t.color}"></div><select onchange="changeTeamColor(${i},this.value)">`;
+    colors.forEach(c=>{
+      html+=`<option value="${c.c}"${c.c===t.color?' selected':''}>${c.n}</option>`;
+    });
+    html+='</select></div>';
+  });
+  document.getElementById('teamsList').innerHTML=html;
+}
+
+function changeTeamColor(idx,color){
+  const found=colors.find(c=>c.c===color);
+  if(found){
+    state.teams[idx].color=found.c;
+    state.teams[idx].name=found.n;
+    renderTeamsList();
+  }
+}
+
+function startTournament(){
+  generateMatches();
+  showPage('p3');
+  updateRanking();
+  updateMatches();
+}
+
+function generateMatches(){
+  state.matches=[];
+  const pairs=MATCHUPS[state.numTeams];
+  pairs.forEach(pair=>{
+    state.matches.push({
+      t1:state.teams[pair[0]],t2:state.teams[pair[1]],s1:null,s2:null,winner:null,
+      played:false,stats:{shots1:0,shots2:0,bonus1:0,bonus2:0,poss1:0,poss2:0}
+    });
+  });
+}
+
+function updateRanking(){
+  const rankings=state.teams.map(t=>({team:t,points:0,wins:0,draws:0,losses:0,goalsFor:0,goalsAgainst:0}));
+  
+  state.matches.forEach(m=>{
+    if(!m.played)return;
+    const r1=rankings.find(r=>r.team.id===m.t1.id);
+    const r2=rankings.find(r=>r.team.id===m.t2.id);
     
-    doc.setTextColor(0,0,0);
-    doc.text(`${i+1}`,10,y);
+    r1.goalsFor+=m.s1;r1.goalsAgainst+=m.s2;
+    r2.goalsFor+=m.s2;r2.goalsAgainst+=m.s1;
     
-    if(isWhite){
-      doc.setDrawColor(0);
-      doc.setLineWidth(0.15);
-      doc.rect(18,y-1.2,5,1.8);
-    }else{
-      doc.setFillColor(parseInt(r.team.color.slice(1,3),16),parseInt(r.team.color.slice(3,5),16),parseInt(r.team.color.slice(5,7),16));
-      doc.rect(18,y-1.2,5,1.8,'F');
-    }
-    
-    doc.text(r.team.name,24,y);
-    doc.text(`${r.points}`,58,y);
-    doc.text(`${r.wins}`,67,y);
-    doc.text(`${r.draws}`,74,y);
-    doc.text(`${r.losses}`,82,y);
-    doc.text(`${r.goalsFor}`,89,y);
-    doc.text(`${r.goalsAgainst}`,99,y);
-    
-    if(diff>0)doc.setTextColor(0,140,0);
-    else if(diff<0)doc.setTextColor(220,0,0);
-    else doc.setTextColor(0);
-    doc.text(`${diff>0?'+':''}${diff}`,109,y);
-    doc.setTextColor(0);
-    
-    doc.text(`${eff}%`,130,y);
-    y+=2;
+    if(m.winner===1){r1.points+=3;r1.wins++;r2.losses++;}
+    else if(m.winner===2){r2.points+=3;r2.wins++;r1.losses++;}
+    else{r1.points++;r2.points++;r1.draws++;r2.draws++;}
   });
   
-  y+=2;
+  rankings.sort((a,b)=>{
+    const pDiff=b.points-a.points;
+    if(pDiff!==0)return pDiff;
+    return(b.goalsFor-b.goalsAgainst)-(a.goalsFor-a.goalsAgainst);
+  });
   
-  const playedMatches=state.matches.filter(m=>m.played);
-  if(playedMatches.length>0){
-    doc.setFontSize(6.5);
-    doc.setFont(undefined,'bold');
-    doc.text('DÉTAILS PAR ÉQUIPE',10,y);
-    y+=2;
-    
-    const col1X=10;
-    const col2X=105;
-    let col1Y=y;
-    let col2Y=y;
-    
-    rankings.forEach((r,idx)=>{
-      const teamMatches=playedMatches.filter(m=>(m.t1.id===r.team.id||m.t2.id===r.team.id));
-      if(teamMatches.length===0)return;
-      
-      const eff=teamStats[r.team.id];
-      const teamMatchesList=state.matches.filter(m=>(m.t1.id===r.team.id||m.t2.id===r.team.id)&&m.played);
-      const shots=teamMatchesList.reduce((sum,m)=>sum+(m.t1.id===r.team.id?m.stats.shots1:m.stats.shots2),0);
-      const missed=teamMatchesList.reduce((sum,m)=>sum+(m.t1.id===r.team.id?m.stats.missedShots1:m.stats.missedShots2),0);
-      const poss=teamMatchesList.reduce((sum,m)=>sum+(m.t1.id===r.team.id?m.stats.poss1:m.stats.poss2),0);
-      const totalShots=shots+missed;
-      const shotsPerPoss=poss>0?Math.round(totalShots/poss*100):0;
-      
-      const isWhite=r.team.color==='#FFFFFF'||r.team.color==='#fbbf24';
-      const currentX=idx<Math.ceil(rankings.length/2)?col1X:col2X;
-      const currentY=idx<Math.ceil(rankings.length/2)?col1Y:col2Y;
-      
-      if(currentY>275)return;
-      
-      if(isWhite){
-        doc.setDrawColor(0);
-        doc.setLineWidth(0.15);
-        doc.rect(currentX,currentY-1,80,1.8);
-      }else{
-        doc.setFillColor(parseInt(r.team.color.slice(1,3),16),parseInt(r.team.color.slice(3,5),16),parseInt(r.team.color.slice(5,7),16));
-        doc.rect(currentX,currentY-1,80,1.8,'F');
-      }
-      
-      doc.setFont(undefined,'bold');
-      doc.setFontSize(6);
-      doc.setTextColor(isWhite?0:255);
-      doc.text(`${r.team.name}`,currentX+1,currentY);
-      doc.setFontSize(5);
-      doc.text(`Eff Tir: ${eff}% | Tirs/Poss: ${shotsPerPoss}%`,currentX+1,currentY+1);
-      
-      let matchY=currentY+2;
-      doc.setFont(undefined,'normal');
-      doc.setFontSize(5.5);
-      doc.setTextColor(0);
-      
-      teamMatches.forEach((m)=>{
-        const isTeam1=m.t1.id===r.team.id;
-        const opponent=isTeam1?m.t2.name:m.t1.name;
-        const score=isTeam1?`${m.s1}-${m.s2}`:`${m.s2}-${m.s1}`;
-        const won=isTeam1?m.s1>m.s2:m.s2>m.s1;
-        const draw=m.s1===m.s2;
-        
-        const shots=isTeam1?m.stats.shots1:m.stats.shots2;
-        const missed=isTeam1?m.stats.missedShots1:m.stats.missedShots2;
-        const poss=isTeam1?m.stats.poss1:m.stats.poss2;
-        const totalShots=shots+missed;
-        const acc=totalShots>0?Math.round(shots/totalShots*100):0;
-        const shotsPerPoss=poss>0?Math.round(totalShots/poss*100):0;
-        
-        let icon='🟡';
-        if(won)icon='🟢';
-        else if(!draw&&!won)icon='🔴';
-        
-        doc.text(`${icon} ${r.team.name} ${score} ${opponent} (${acc}% / ${shotsPerPoss}%)`,currentX+1,matchY);
-        matchY+=1.8;
-      });
-      
-      if(idx<Math.ceil(rankings.length/2)){
-        col1Y=matchY+0.8;
-      }else{
-        col2Y=matchY+0.8;
-      }
-    });
-  }
-  
-  doc.setFontSize(5.5);
-  doc.setTextColor(150,150,150);
-  doc.text(`Généré le ${new Date().toLocaleString('fr-FR')}`,105,285,{align:'center'});
-  
-  doc.save(`tournoi-handball-${Date.now()}.pdf`);
+  let html='<tr><th>Pos</th><th>Équipe</th><th>Pts</th><th>V-N-D</th><th>BP:BC</th><th>Diff</th></tr>';
+  rankings.forEach((r,i)=>{
+    const diff=r.goalsFor-r.goalsAgainst;
+    const diffColor=diff>0?'#38ef7d':(diff<0?'#ff6a00':'#fff');
+    html+=`<tr><td><strong>${i+1}</strong></td><td><div style="display:flex;align-items:center;gap:10px"><div class="color-badge" style="background:${r.team.color};width:32px;height:32px"></div><span>${r.team.name}</span></div></td><td><strong>${r.points}</strong></td><td>${r.wins}-${r.draws}-${r.losses}</td><td>${r.goalsFor}:${r.goalsAgainst}</td><td style="color:${diffColor}"><strong>${diff>0?'+':''}${diff}</strong></td></tr>`;
+  });
+  document.getElementById('rankingTable').innerHTML=html;
 }
-</script>
-</body>
-</html>
+
+function updateMatches(){
+  const played=state.matches.filter(m=>m.played).length;
+  const total=state.matches.length;
+  document.getElementById('matchCounter').textContent=`${played}/${total}`;
+  
+  let html='';

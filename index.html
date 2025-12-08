@@ -110,15 +110,15 @@ input[type="number"]::placeholder{color:rgba(255,255,255,.6)}
 </div>
 </div>
 <div class="bonus-section">
-<label style="display:flex;align-items:center;gap:15px;cursor:pointer;margin-bottom:20px">
+<label style="display:flex;align-items:center;gap:15px;cursor:pointer;margin-bottom:12px">
 <input type="checkbox" id="bonusCheck" onclick="toggleBonus()">
-<strong style="font-size:1.2rem">⭐ ACTIVER BONUS</strong>
+<strong style="font-size:1rem">⭐ ACTIVER BONUS</strong>
 </label>
-<div id="bonusOpt" style="display:none">
-<label style="display:block;margin-bottom:10px;font-size:1.1rem;font-weight:700">Nom du bonus :</label>
-<input type="text" id="bonusName" value="" placeholder="Ex: 7m penalty, action spéciale...">
-<strong style="display:block;margin-top:20px;font-size:1.2rem">Points par bonus :</strong>
-<div class="counter">
+<div id="bonusOpt" style="display:none;padding:10px">
+<label style="display:block;margin-bottom:8px;font-size:0.9rem;font-weight:700">Nom :</label>
+<input type="text" id="bonusName" value="" placeholder="Ex: 7m penalty" style="margin:5px 0;font-size:0.9rem;padding:8px">
+<strong style="display:block;margin-top:8px;font-size:0.9rem">Points par bonus :</strong>
+<div class="counter" style="margin:8px 0">
 <button onclick="adjustBonusPoints(-1)">−</button>
 <span id="bonusPts">1</span>
 <button onclick="adjustBonusPoints(1)">+</button>

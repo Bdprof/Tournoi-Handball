@@ -202,7 +202,7 @@ input[type="number"]::placeholder{color:rgba(255,255,255,.6)}
 <button class="action-btn" style="background:linear-gradient(135deg,#ee0979,#ff6a00);color:#fff" onclick="missedShot()">❌ TIR RATÉ</button>
 </div>
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:15px">
-<button class="action-btn" id="bonusBtn" style="background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;display:none" onclick="scoreBonus()">⭐ BONUS</button>
+<button class="action-btn" style="background:linear-gradient(135deg,#f093fb,#f5576c);color:#fff;display:none" id="bonusBtn" onclick="scoreBonus()">⭐</button>
 <button class="action-btn" style="background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff" onclick="turnover()">🔄 PERTE</button>
 </div>
 </div>
@@ -1073,21 +1073,19 @@ function exportPDF(){
   const jsPDF=window.jspdf.jsPDF;
   const doc=new jsPDF();
   
-  // En-tête
   doc.setTextColor(30,58,138);
-  doc.setFontSize(18);
+  doc.setFontSize(16);
   doc.setFont(undefined,'bold');
   doc.text('TOURNOI HANDBALL',105,12,{align:'center'});
   
   const played=state.matches.filter(m=>m.played).length;
-  doc.setTextColor(100,100,100);
-  doc.setFontSize(8);
+  doc.setTextColor(80,80,80);
+  doc.setFontSize(7.5);
   doc.setFont(undefined,'normal');
-  doc.text(`Date: ${new Date().toLocaleDateString('fr-FR')} | Matchs: ${played}/${state.matches.length} | Durée: ${state.duration} min | Points/but: ${state.pointsPerGoal}`,105,17,{align:'center'});
+  doc.text(`Date: ${new Date().toLocaleDateString('fr-FR')} | Matchs: ${played}/${state.matches.length} | Durée: ${state.duration} min | Points/but: ${state.pointsPerGoal}`,105,16,{align:'center'});
   
-  let y=24;
+  let y=22;
   
-  // Calcul classement
   const rankings=state.teams.map(t=>({team:t,points:0,wins:0,draws:0,losses:0,goalsFor:0,goalsAgainst:0}));
   state.matches.forEach(m=>{
     if(!m.played)return;
@@ -1105,7 +1103,6 @@ function exportPDF(){
     return(b.goalsFor-b.goalsAgainst)-(a.goalsFor-a.goalsAgainst);
   });
   
-  // Calcul efficacité
   const teamStats={};
   rankings.forEach(r=>{
     const teamMatches=state.matches.filter(m=>(m.t1.id===r.team.id||m.t2.id===r.team.id)&&m.played);
@@ -1116,76 +1113,73 @@ function exportPDF(){
     teamStats[r.team.id]=accuracy;
   });
   
-  // Tableau classement
-  doc.setFontSize(7);
+  doc.setFontSize(6.5);
   doc.setFont(undefined,'bold');
   doc.setTextColor(0,0,0);
-  doc.text('Pos',12,y);
-  doc.text('Équipe',22,y);
-  doc.text('Pts',60,y);
-  doc.text('V',70,y);
-  doc.text('N',78,y);
-  doc.text('D',85,y);
-  doc.text('BP',92,y);
-  doc.text('BC',102,y);
-  doc.text('Diff',110,y);
-  doc.text('Eff%',135,y);
-  y+=3;
-  doc.setDrawColor(100);
-  doc.setLineWidth(0.3);
-  doc.line(10,y,200,y);
+  doc.text('Pos',10,y);
+  doc.text('Équipe',18,y);
+  doc.text('Pts',58,y);
+  doc.text('V',67,y);
+  doc.text('N',74,y);
+  doc.text('D',82,y);
+  doc.text('BP',89,y);
+  doc.text('BC',99,y);
+  doc.text('Diff',109,y);
+  doc.text('Eff%',130,y);
   y+=2.5;
+  doc.setDrawColor(150);
+  doc.setLineWidth(0.2);
+  doc.line(10,y,190,y);
+  y+=2;
   
   doc.setFont(undefined,'normal');
-  doc.setFontSize(6.5);
+  doc.setFontSize(6);
   rankings.forEach((r,i)=>{
     const diff=r.goalsFor-r.goalsAgainst;
     const isWhite=r.team.color==='#FFFFFF'||r.team.color==='#fbbf24';
     const eff=teamStats[r.team.id];
     
     doc.setTextColor(0,0,0);
-    doc.text(`${i+1}`,12,y);
+    doc.text(`${i+1}`,10,y);
     
-    // Couleur équipe
     if(isWhite){
       doc.setDrawColor(0);
-      doc.setLineWidth(0.2);
-      doc.rect(22,y-1.5,6,2);
+      doc.setLineWidth(0.15);
+      doc.rect(18,y-1.2,5,1.8);
     }else{
       doc.setFillColor(parseInt(r.team.color.slice(1,3),16),parseInt(r.team.color.slice(3,5),16),parseInt(r.team.color.slice(5,7),16));
-      doc.rect(22,y-1.5,6,2,'F');
+      doc.rect(18,y-1.2,5,1.8,'F');
     }
     
-    doc.text(r.team.name,29,y);
-    doc.text(`${r.points}`,60,y);
-    doc.text(`${r.wins}`,70,y);
-    doc.text(`${r.draws}`,78,y);
-    doc.text(`${r.losses}`,85,y);
-    doc.text(`${r.goalsFor}`,92,y);
-    doc.text(`${r.goalsAgainst}`,102,y);
+    doc.text(r.team.name,24,y);
+    doc.text(`${r.points}`,58,y);
+    doc.text(`${r.wins}`,67,y);
+    doc.text(`${r.draws}`,74,y);
+    doc.text(`${r.losses}`,82,y);
+    doc.text(`${r.goalsFor}`,89,y);
+    doc.text(`${r.goalsAgainst}`,99,y);
     
-    if(diff>0)doc.setTextColor(0,150,0);
-    else if(diff<0)doc.setTextColor(200,0,0);
+    if(diff>0)doc.setTextColor(0,140,0);
+    else if(diff<0)doc.setTextColor(220,0,0);
     else doc.setTextColor(0);
-    doc.text(`${diff>0?'+':''}${diff}`,110,y);
+    doc.text(`${diff>0?'+':''}${diff}`,109,y);
     doc.setTextColor(0);
     
-    doc.text(`${eff}%`,135,y);
-    y+=2.5;
+    doc.text(`${eff}%`,130,y);
+    y+=2;
   });
   
-  y+=3;
+  y+=2;
   
-  // Détails par équipe en 2 colonnes
   const playedMatches=state.matches.filter(m=>m.played);
   if(playedMatches.length>0){
-    doc.setFontSize(7);
+    doc.setFontSize(6.5);
     doc.setFont(undefined,'bold');
-    doc.text('DÉTAILS PAR ÉQUIPE',12,y);
-    y+=3;
+    doc.text('DÉTAILS PAR ÉQUIPE',10,y);
+    y+=2;
     
-    const col1X=12;
-    const col2X=107;
+    const col1X=10;
+    const col2X=105;
     let col1Y=y;
     let col2Y=y;
     
@@ -1194,30 +1188,38 @@ function exportPDF(){
       if(teamMatches.length===0)return;
       
       const eff=teamStats[r.team.id];
+      const teamMatchesList=state.matches.filter(m=>(m.t1.id===r.team.id||m.t2.id===r.team.id)&&m.played);
+      const shots=teamMatchesList.reduce((sum,m)=>sum+(m.t1.id===r.team.id?m.stats.shots1:m.stats.shots2),0);
+      const missed=teamMatchesList.reduce((sum,m)=>sum+(m.t1.id===r.team.id?m.stats.missedShots1:m.stats.missedShots2),0);
+      const poss=teamMatchesList.reduce((sum,m)=>sum+(m.t1.id===r.team.id?m.stats.poss1:m.stats.poss2),0);
+      const totalShots=shots+missed;
+      const shotsPerPoss=poss>0?Math.round(totalShots/poss*100):0;
+      
       const isWhite=r.team.color==='#FFFFFF'||r.team.color==='#fbbf24';
       const currentX=idx<Math.ceil(rankings.length/2)?col1X:col2X;
       const currentY=idx<Math.ceil(rankings.length/2)?col1Y:col2Y;
       
-      if(currentY>270)return;
+      if(currentY>275)return;
       
-      // Nom équipe avec couleur et efficacité
       if(isWhite){
         doc.setDrawColor(0);
-        doc.setLineWidth(0.2);
-        doc.rect(currentX,currentY-1.3,85,2);
+        doc.setLineWidth(0.15);
+        doc.rect(currentX,currentY-1,80,1.8);
       }else{
         doc.setFillColor(parseInt(r.team.color.slice(1,3),16),parseInt(r.team.color.slice(3,5),16),parseInt(r.team.color.slice(5,7),16));
-        doc.rect(currentX,currentY-1.3,85,2,'F');
+        doc.rect(currentX,currentY-1,80,1.8,'F');
       }
       
       doc.setFont(undefined,'bold');
-      doc.setFontSize(7);
-      doc.setTextColor(isWhite?0:255);
-      doc.text(`${r.team.name} - Eff: ${eff}%`,currentX+1.5,currentY);
-      
-      let matchY=currentY+1.8;
-      doc.setFont(undefined,'normal');
       doc.setFontSize(6);
+      doc.setTextColor(isWhite?0:255);
+      doc.text(`${r.team.name}`,currentX+1,currentY);
+      doc.setFontSize(5);
+      doc.text(`Eff Tir: ${eff}% | Tirs/Poss: ${shotsPerPoss}%`,currentX+1,currentY+1);
+      
+      let matchY=currentY+2;
+      doc.setFont(undefined,'normal');
+      doc.setFontSize(5.5);
       doc.setTextColor(0);
       
       teamMatches.forEach((m)=>{
@@ -1229,26 +1231,28 @@ function exportPDF(){
         
         const shots=isTeam1?m.stats.shots1:m.stats.shots2;
         const missed=isTeam1?m.stats.missedShots1:m.stats.missedShots2;
+        const poss=isTeam1?m.stats.poss1:m.stats.poss2;
         const totalShots=shots+missed;
         const acc=totalShots>0?Math.round(shots/totalShots*100):0;
+        const shotsPerPoss=poss>0?Math.round(totalShots/poss*100):0;
         
-        let result='(N)';
-        if(won)result='(V)';
-        else if(!draw&&!won)result='(D)';
+        let icon='🟡';
+        if(won)icon='🟢';
+        else if(!draw&&!won)icon='🔴';
         
-        doc.text(`${opponent}: ${score} ${result} - Eff: ${acc}%`,currentX+1.5,matchY);
-        matchY+=2;
+        doc.text(`${icon} ${r.team.name} ${score} ${opponent} (${acc}% / ${shotsPerPoss}%)`,currentX+1,matchY);
+        matchY+=1.8;
       });
       
       if(idx<Math.ceil(rankings.length/2)){
-        col1Y=matchY+1;
+        col1Y=matchY+0.8;
       }else{
-        col2Y=matchY+1;
+        col2Y=matchY+0.8;
       }
     });
   }
   
-  doc.setFontSize(6);
+  doc.setFontSize(5.5);
   doc.setTextColor(150,150,150);
   doc.text(`Généré le ${new Date().toLocaleString('fr-FR')}`,105,285,{align:'center'});
   

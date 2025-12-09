@@ -1094,7 +1094,7 @@ function exportPDF(){
   doc.setFont(undefined,'bold');
   doc.setTextColor(30,58,138);
   doc.text('CLASSEMENT',15,y);
-  y+=6;
+  y+=8;
   
   const rankings=state.teams.map(t=>({team:t,points:0,wins:0,draws:0,losses:0,goalsFor:0,goalsAgainst:0}));
   state.matches.forEach(m=>{
@@ -1187,7 +1187,7 @@ function exportPDF(){
     y+=6;
   });
   
-  y+=6;
+  y+=10;
   
   // BILAN PAR ÉQUIPE - 2 COLONNES
   doc.setFontSize(12);
@@ -1229,9 +1229,9 @@ function exportPDF(){
     doc.setFontSize(9);
     doc.text(r.team.name,currentX+colWidth/2,currentY+1,{align:'center'});
     
-    let matchY=currentY+6;
+    let matchY=currentY+7;
     doc.setFont(undefined,'normal');
-    doc.setFontSize(7);
+    doc.setFontSize(7.5);
     
     teamMatches.forEach((m)=>{
       const isTeam1=m.t1.id===r.team.id;
@@ -1262,19 +1262,18 @@ function exportPDF(){
       }
       
       doc.setFillColor(bgColor[0],bgColor[1],bgColor[2]);
-      doc.rect(currentX,matchY-2.5,colWidth,4,'F');
+      doc.rect(currentX,matchY-3,colWidth,5.5,'F');
       doc.setDrawColor(200,200,200);
       doc.setLineWidth(0.2);
-      doc.rect(currentX,matchY-2.5,colWidth,4);
+      doc.rect(currentX,matchY-3,colWidth,5.5);
       
       doc.setTextColor(textColor[0],textColor[1],textColor[2]);
       doc.setFont(undefined,'bold');
-      doc.text(`${r.team.name} ${score} ${opponent}`,currentX+1,matchY);
+      doc.text(`${r.team.name} ${score} ${opponent}`,currentX+1,matchY-0.5);
       doc.setFont(undefined,'normal');
-      doc.setFontSize(6);
-      doc.text(`Tirs/Poss: ${shotsPerPoss}% • Réussite: ${acc}%`,currentX+1,matchY+2.5);
+      doc.text(`Tirs/Poss: ${shotsPerPoss}% | Réussite: ${acc}%`,currentX+1,matchY+2);
       
-      matchY+=7;
+      matchY+=9;
     });
     
     if(currentCol===1){

@@ -1182,6 +1182,10 @@ function exportPDF(){
     doc.text(`${shotsPerMatch.toFixed(0)}%`,colX[9],y);
     doc.text(`${eff}%`,colX[10],y);
     
+    doc.setDrawColor(200,200,200);
+    doc.setLineWidth(0.3);
+    doc.rect(15,y-4.5,195,6);
+    
     y+=6;
   });
   

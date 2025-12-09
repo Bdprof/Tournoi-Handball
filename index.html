@@ -242,13 +242,11 @@ input[type="number"]::placeholder{color:rgba(255,255,255,.6)}
 <script>
 // Nettoyage complet des anciens Service Workers
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.getRegistrations().then(regs=>{
-    regs.forEach(reg=>reg.unregister());
+  navigator.serviceWorker.register('/service-worker.js').then(registration => {
+    console.log('Service Worker enregistré:', registration);
+  }).catch(err => {
+    console.log('Erreur Service Worker:', err);
   });
-  // Nettoyage du cache
-  if('caches' in window){
-    caches.keys().then(names=>names.forEach(n=>caches.delete(n)));
-  }
 }
 </script>
 <script>

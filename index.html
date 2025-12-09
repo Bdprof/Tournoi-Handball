@@ -1268,10 +1268,10 @@ function exportPDF(){
       doc.setTextColor(textColor[0],textColor[1],textColor[2]);
       doc.setFont(undefined,'bold');
       doc.setFontSize(8);
-      doc.text(`${r.team.name} ${score} ${opponent}`,currentX+1,matchY-0.5);
+      doc.text(`${r.team.name} ${score} ${opponent}`,currentX+1,matchY+0.8);
       doc.setFont(undefined,'normal');
       doc.setFontSize(7);
-      doc.text(`Tirs/Poss: ${shotsPerPoss}% | Réussite: ${acc}%`,currentX+55,matchY-0.5);
+      doc.text(`Tirs/Poss: ${shotsPerPoss}% | Réussite: ${acc}%`,currentX+48,matchY+0.8);
       
       matchY+=10;
     });

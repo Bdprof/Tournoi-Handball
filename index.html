@@ -1227,7 +1227,7 @@ function exportPDF(){
     doc.setFontSize(9);
     doc.text(r.team.name,currentX+colWidth/2,currentY+1,{align:'center'});
     
-    let matchY=currentY+7;
+    let matchY=currentY+8;
     doc.setFont(undefined,'normal');
     doc.setFontSize(7.5);
     
@@ -1260,18 +1260,20 @@ function exportPDF(){
       }
       
       doc.setFillColor(bgColor[0],bgColor[1],bgColor[2]);
-      doc.rect(currentX,matchY-3,colWidth,5.5,'F');
+      doc.rect(currentX,matchY-3,colWidth,6,'F');
       doc.setDrawColor(200,200,200);
       doc.setLineWidth(0.2);
-      doc.rect(currentX,matchY-3,colWidth,5.5);
+      doc.rect(currentX,matchY-3,colWidth,6);
       
       doc.setTextColor(textColor[0],textColor[1],textColor[2]);
       doc.setFont(undefined,'bold');
+      doc.setFontSize(8);
       doc.text(`${r.team.name} ${score} ${opponent}`,currentX+1,matchY-0.5);
       doc.setFont(undefined,'normal');
-      doc.text(`Tirs/Poss: ${shotsPerPoss}% | Réussite: ${acc}%`,currentX+1,matchY+2);
+      doc.setFontSize(7);
+      doc.text(`Tirs/Poss: ${shotsPerPoss}% | Réussite: ${acc}%`,currentX+55,matchY-0.5);
       
-      matchY+=9;
+      matchY+=10;
     });
     
     if(currentCol===1){

@@ -1187,7 +1187,7 @@ function exportPDF(){
     y+=6;
   });
   
-  y+=3;
+  y+=6;
   
   // BILAN PAR ÉQUIPE - 2 COLONNES
   doc.setFontSize(12);
@@ -1227,7 +1227,7 @@ function exportPDF(){
     
     doc.setFont(undefined,'bold');
     doc.setFontSize(9);
-    doc.text(r.team.name,currentX+2,currentY+1);
+    doc.text(r.team.name,currentX+colWidth/2,currentY+1,{align:'center'});
     
     let matchY=currentY+6;
     doc.setFont(undefined,'normal');
@@ -1271,9 +1271,10 @@ function exportPDF(){
       doc.setFont(undefined,'bold');
       doc.text(`${r.team.name} ${score} ${opponent}`,currentX+1,matchY);
       doc.setFont(undefined,'normal');
-      doc.text(`${shotsPerPoss}% • ${acc}%`,currentX+50,matchY);
+      doc.setFontSize(6);
+      doc.text(`Tirs/Poss: ${shotsPerPoss}% • Réussite: ${acc}%`,currentX+1,matchY+2.5);
       
-      matchY+=5;
+      matchY+=7;
     });
     
     if(currentCol===1){

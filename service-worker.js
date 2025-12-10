@@ -3,7 +3,9 @@ const CACHE_NAME = 'tournoi-handball-v1';
 const urlsToCache = [
   '/',
   '/index.html',
-  'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'
+  'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
+  'https://raw.githubusercontent.com/Bdprof/Tournoi-Handball/refs/heads/main/Logo%20apps%20tournoi%20Handball%202.png',
+  'https://raw.githubusercontent.com/Bdprof/Tournoi-Handball/refs/heads/main/Accueil%20apps%20tournoi%20Handball.png'
 ];
 
 // Installation du Service Worker
